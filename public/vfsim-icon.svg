@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="VFSim icon">
+<rect width="64" height="64" rx="15" fill="#111e34"/>
+<g stroke="#67e8f9" stroke-width="3" stroke-linecap="round" fill="none"><path d="M17 19 L32 10 L47 19 L47 45 L32 54 L17 45 Z"/><path d="M17 19 L32 29 L47 19 M32 29 V54"/></g>
+<circle cx="17" cy="19" r="4.5" fill="#a78bfa"/><circle cx="47" cy="19" r="4.5" fill="#67e8f9"/><circle cx="32" cy="54" r="4.5" fill="#34d399"/>
+</svg>

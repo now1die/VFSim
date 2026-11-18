@@ -1,0 +1,2784 @@
+{
+  "study": "VFSim v0.9 external synthetic workload families + independent training seeds",
+  "status": "completed",
+  "trained_model": "FaultLab operand-aware v0.8 architecture (unchanged)",
+  "registered_config": {
+    "training_seeds": [
+      11,
+      29,
+      47,
+      83,
+      131
+    ],
+    "samples_per_seed": 5000,
+    "max_epochs": 5,
+    "checkpoint_selection": "lowest in-family validation MAE",
+    "external_per_family": 240,
+    "external_dataset_seed": 20261116
+  },
+  "external_cohort": {
+    "cohort_sha256": "1b738e13bba0236492b970f04120f09dc7790014ad52918e2ec4928d75fc8a27",
+    "generator_sha256": "8c1ad704af9b58c69cf930f720b4152678f1f643bec81b16b3e9977d779e80cd",
+    "cohort_seed": 20261116,
+    "workload_families": [
+      "editor_autosave",
+      "package_upgrade",
+      "mirrored_alias_rotation",
+      "manifest_publication",
+      "directory_migration",
+      "snapshot_batch"
+    ],
+    "cases_per_family": 240,
+    "summary": {
+      "count": 1440,
+      "families": {
+        "editor_autosave": 240,
+        "package_upgrade": 240,
+        "mirrored_alias_rotation": 240,
+        "manifest_publication": 240,
+        "directory_migration": 240,
+        "snapshot_batch": 240
+      },
+      "zero_risk": 157,
+      "certain_failure": 0,
+      "intermediate_risk": 1283,
+      "mean_risk": 0.50384
+    }
+  },
+  "runs": [
+    {
+      "training_seed": 11,
+      "training_samples": 5000,
+      "epochs": 5,
+      "selected_epoch": 5,
+      "best_validation_mae": 0.01842,
+      "models": {
+        "GNN v0.8 operand-aware": {
+          "count": 1440,
+          "mean_oracle_risk": 0.50384,
+          "mae_to_oracle": 0.13856,
+          "rmse_to_oracle": 0.20186,
+          "brier_to_sampled_outcome": 0.1955,
+          "spearman_risk_rank": 0.84044,
+          "realized_violations": 684,
+          "sampled_roc_auc": 0.78353,
+          "sampled_average_precision": 0.75083,
+          "prioritization": {
+            "5pct": {
+              "tests": 72,
+              "expected_violations": 66.83,
+              "observed_violations": 66,
+              "oracle_optimal_expected": 71.89
+            },
+            "10pct": {
+              "tests": 144,
+              "expected_violations": 129.65,
+              "observed_violations": 125,
+              "oracle_optimal_expected": 142.06
+            },
+            "20pct": {
+              "tests": 288,
+              "expected_violations": 249.59,
+              "observed_violations": 241,
+              "oracle_optimal_expected": 270.34
+            },
+            "50pct": {
+              "tests": 720,
+              "expected_violations": 522.65,
+              "observed_violations": 499,
+              "oracle_optimal_expected": 549.84
+            }
+          }
+        },
+        "Random Forest": {
+          "count": 1440,
+          "mean_oracle_risk": 0.50384,
+          "mae_to_oracle": 0.19694,
+          "rmse_to_oracle": 0.25859,
+          "brier_to_sampled_outcome": 0.22396,
+          "spearman_risk_rank": 0.58481,
+          "realized_violations": 684,
+          "sampled_roc_auc": 0.68747,
+          "sampled_average_precision": 0.66016,
+          "prioritization": {
+            "5pct": {
+              "tests": 72,
+              "expected_violations": 60.44,
+              "observed_violations": 59,
+              "oracle_optimal_expected": 71.89
+            },
+            "10pct": {
+              "tests": 144,
+              "expected_violations": 113.11,
+              "observed_violations": 110,
+              "oracle_optimal_expected": 142.06
+            },
+            "20pct": {
+              "tests": 288,
+              "expected_violations": 215.14,
+              "observed_violations": 205,
+              "oracle_optimal_expected": 270.34
+            },
+            "50pct": {
+              "tests": 720,
+              "expected_violations": 465.62,
+              "observed_violations": 429,
+              "oracle_optimal_expected": 549.84
+            }
+          }
+        },
+        "HistGradientBoosting": {
+          "count": 1440,
+          "mean_oracle_risk": 0.50384,
+          "mae_to_oracle": 0.20372,
+          "rmse_to_oracle": 0.26581,
+          "brier_to_sampled_outcome": 0.22759,
+          "spearman_risk_rank": 0.54038,
+          "realized_violations": 684,
+          "sampled_roc_auc": 0.67424,
+          "sampled_average_precision": 0.63678,
+          "prioritization": {
+            "5pct": {
+              "tests": 72,
+              "expected_violations": 59.15,
+              "observed_violations": 53,
+              "oracle_optimal_expected": 71.89
+            },
+            "10pct": {
+              "tests": 144,
+              "expected_violations": 116.49,
+              "observed_violations": 113,
+              "oracle_optimal_expected": 142.06
+            },
+            "20pct": {
+              "tests": 288,
+              "expected_violations": 213.59,
+              "observed_violations": 201,
+              "oracle_optimal_expected": 270.34
+            },
+            "50pct": {
+              "tests": 720,
+              "expected_violations": 457.14,
+              "observed_violations": 427,
+              "oracle_optimal_expected": 549.84
+            }
+          }
+        },
+        "XGBoost": {
+          "count": 1440,
+          "mean_oracle_risk": 0.50384,
+          "mae_to_oracle": 0.2109,
+          "rmse_to_oracle": 0.28258,
+          "brier_to_sampled_outcome": 0.23797,
+          "spearman_risk_rank": 0.48028,
+          "realized_violations": 684,
+          "sampled_roc_auc": 0.6499,
+          "sampled_average_precision": 0.61463,
+          "prioritization": {
+            "5pct": {
+              "tests": 72,
+              "expected_violations": 55.69,
+              "observed_violations": 51,
+              "oracle_optimal_expected": 71.89
+            },
+            "10pct": {
+              "tests": 144,
+              "expected_violations": 108.66,
+              "observed_violations": 106,
+              "oracle_optimal_expected": 142.06
+            },
+            "20pct": {
+              "tests": 288,
+              "expected_violations": 208.67,
+              "observed_violations": 196,
+              "oracle_optimal_expected": 270.34
+            },
+            "50pct": {
+              "tests": 720,
+              "expected_violations": 440.59,
+              "observed_violations": 406,
+              "oracle_optimal_expected": 549.84
+            }
+          }
+        },
+        "Ridge (graph statistics)": {
+          "count": 1440,
+          "mean_oracle_risk": 0.50384,
+          "mae_to_oracle": 0.35036,
+          "rmse_to_oracle": 0.4407,
+          "brier_to_sampled_outcome": 0.35913,
+          "spearman_risk_rank": 0.02941,
+          "realized_violations": 684,
+          "sampled_roc_auc": 0.49851,
+          "sampled_average_precision": 0.48026,
+          "prioritization": {
+            "5pct": {
+              "tests": 72,
+              "expected_violations": 35.75,
+              "observed_violations": 37,
+              "oracle_optimal_expected": 71.89
+            },
+            "10pct": {
+              "tests": 144,
+              "expected_violations": 68.35,
+              "observed_violations": 68,
+              "oracle_optimal_expected": 142.06
+            },
+            "20pct": {
+              "tests": 288,
+              "expected_violations": 146.64,
+              "observed_violations": 141,
+              "oracle_optimal_expected": 270.34
+            },
+            "50pct": {
+              "tests": 720,
+              "expected_violations": 386.26,
+              "observed_violations": 353,
+              "oracle_optimal_expected": 549.84
+            }
+          }
+        },
+        "Pending-writeback heuristic": {
+          "count": 1440,
+          "mean_oracle_risk": 0.50384,
+          "mae_to_oracle": 0.42977,
+          "rmse_to_oracle": 0.50118,
+          "brier_to_sampled_outcome": 0.42308,
+          "spearman_risk_rank": -0.17113,
+          "realized_violations": 684,
+          "sampled_roc_auc": 0.44345,
+          "sampled_average_precision": 0.44455,
+          "prioritization": {
+            "5pct": {
+              "tests": 72,
+              "expected_violations": 28.53,
+              "observed_violations": 32,
+              "oracle_optimal_expected": 71.89
+            },
+            "10pct": {
+              "tests": 144,
+              "expected_violations": 51.54,
+              "observed_violations": 58,
+              "oracle_optimal_expected": 142.06
+            },
+            "20pct": {
+              "tests": 288,
+              "expected_violations": 115.94,
+              "observed_violations": 115,
+              "oracle_optimal_expected": 270.34
+            },
+            "50pct": {
+              "tests": 720,
+              "expected_violations": 322.8,
+              "observed_violations": 305,
+              "oracle_optimal_expected": 549.84
+            }
+          }
+        }
+      },
+      "by_family": {
+        "GNN v0.8 operand-aware": {
+          "editor_autosave": {
+            "count": 240,
+            "mae": 0.063388,
+            "mean_oracle_risk": 0.439867,
+            "expected_failures_top10pct": 20.1143
+          },
+          "package_upgrade": {
+            "count": 240,
+            "mae": 0.236168,
+            "mean_oracle_risk": 0.758413,
+            "expected_failures_top10pct": 23.740063
+          },
+          "mirrored_alias_rotation": {
+            "count": 240,
+            "mae": 0.147266,
+            "mean_oracle_risk": 0.39261,
+            "expected_failures_top10pct": 20.47
+          },
+          "manifest_publication": {
+            "count": 240,
+            "mae": 0.079208,
+            "mean_oracle_risk": 0.345365,
+            "expected_failures_top10pct": 19.6899
+          },
+          "directory_migration": {
+            "count": 240,
+            "mae": 0.048528,
+            "mean_oracle_risk": 0.366149,
+            "expected_failures_top10pct": 19.95
+          },
+          "snapshot_batch": {
+            "count": 240,
+            "mae": 0.256786,
+            "mean_oracle_risk": 0.72063,
+            "expected_failures_top10pct": 23.553148
+          }
+        },
+        "Random Forest": {
+          "editor_autosave": {
+            "count": 240,
+            "mae": 0.165574,
+            "mean_oracle_risk": 0.439867,
+            "expected_failures_top10pct": 12.114
+          },
+          "package_upgrade": {
+            "count": 240,
+            "mae": 0.271475,
+            "mean_oracle_risk": 0.758413,
+            "expected_failures_top10pct": 21.809853
+          },
+          "mirrored_alias_rotation": {
+            "count": 240,
+            "mae": 0.171292,
+            "mean_oracle_risk": 0.39261,
+            "expected_failures_top10pct": 11.2246
+          },
+          "manifest_publication": {
+            "count": 240,
+            "mae": 0.157848,
+            "mean_oracle_risk": 0.345365,
+            "expected_failures_top10pct": 18.2061
+          },
+          "directory_migration": {
+            "count": 240,
+            "mae": 0.125769,
+            "mean_oracle_risk": 0.366149,
+            "expected_failures_top10pct": 18.68
+          },
+          "snapshot_batch": {
+            "count": 240,
+            "mae": 0.289679,
+            "mean_oracle_risk": 0.72063,
+            "expected_failures_top10pct": 23.007377
+          }
+        },
+        "HistGradientBoosting": {
+          "editor_autosave": {
+            "count": 240,
+            "mae": 0.161879,
+            "mean_oracle_risk": 0.439867,
+            "expected_failures_top10pct": 16.1815
+          },
+          "package_upgrade": {
+            "count": 240,
+            "mae": 0.296157,
+            "mean_oracle_risk": 0.758413,
+            "expected_failures_top10pct": 22.319294
+          },
+          "mirrored_alias_rotation": {
+            "count": 240,
+            "mae": 0.143774,
+            "mean_oracle_risk": 0.39261,
+            "expected_failures_top10pct": 13.2536
+          },
+          "manifest_publication": {
+            "count": 240,
+            "mae": 0.152913,
+            "mean_oracle_risk": 0.345365,
+            "expected_failures_top10pct": 20.4024
+          },
+          "directory_migration": {
+            "count": 240,
+            "mae": 0.145612,
+            "mean_oracle_risk": 0.366149,
+            "expected_failures_top10pct": 17.39
+          },
+          "snapshot_batch": {
+            "count": 240,
+            "mae": 0.321974,
+            "mean_oracle_risk": 0.72063,
+            "expected_failures_top10pct": 23.703544
+          }
+        },
+        "XGBoost": {
+          "editor_autosave": {
+            "count": 240,
+            "mae": 0.162977,
+            "mean_oracle_risk": 0.439867,
+            "expected_failures_top10pct": 15.3604
+          },
+          "package_upgrade": {
+            "count": 240,
+            "mae": 0.275157,
+            "mean_oracle_risk": 0.758413,
+            "expected_failures_top10pct": 21.29943
+          },
+          "mirrored_alias_rotation": {
+            "count": 240,
+            "mae": 0.178013,
+            "mean_oracle_risk": 0.39261,
+            "expected_failures_top10pct": 11.2246
+          },
+          "manifest_publication": {
+            "count": 240,
+            "mae": 0.159825,
+            "mean_oracle_risk": 0.345365,
+            "expected_failures_top10pct": 19.8399
+          },
+          "directory_migration": {
+            "count": 240,
+            "mae": 0.147352,
+            "mean_oracle_risk": 0.366149,
+            "expected_failures_top10pct": 17.75
+          },
+          "snapshot_batch": {
+            "count": 240,
+            "mae": 0.342084,
+            "mean_oracle_risk": 0.72063,
+            "expected_failures_top10pct": 23.3682
+          }
+        },
+        "Ridge (graph statistics)": {
+          "editor_autosave": {
+            "count": 240,
+            "mae": 0.255636,
+            "mean_oracle_risk": 0.439867,
+            "expected_failures_top10pct": 14.13745
+          },
+          "package_upgrade": {
+            "count": 240,
+            "mae": 0.197151,
+            "mean_oracle_risk": 0.758413,
+            "expected_failures_top10pct": 22.360873
+          },
+          "mirrored_alias_rotation": {
+            "count": 240,
+            "mae": 0.567533,
+            "mean_oracle_risk": 0.39261,
+            "expected_failures_top10pct": 11.7662
+          },
+          "manifest_publication": {
+            "count": 240,
+            "mae": 0.202523,
+            "mean_oracle_risk": 0.345365,
+            "expected_failures_top10pct": 16.9312
+          },
+          "directory_migration": {
+            "count": 240,
+            "mae": 0.257223,
+            "mean_oracle_risk": 0.366149,
+            "expected_failures_top10pct": 14.2336
+          },
+          "snapshot_batch": {
+            "count": 240,
+            "mae": 0.622085,
+            "mean_oracle_risk": 0.72063,
+            "expected_failures_top10pct": 15.300525
+          }
+        },
+        "Pending-writeback heuristic": {
+          "editor_autosave": {
+            "count": 240,
+            "mae": 0.449951,
+            "mean_oracle_risk": 0.439867,
+            "expected_failures_top10pct": 7.02375
+          },
+          "package_upgrade": {
+            "count": 240,
+            "mae": 0.299607,
+            "mean_oracle_risk": 0.758413,
+            "expected_failures_top10pct": 12.661801
+          },
+          "mirrored_alias_rotation": {
+            "count": 240,
+            "mae": 0.49709,
+            "mean_oracle_risk": 0.39261,
+            "expected_failures_top10pct": 4.935
+          },
+          "manifest_publication": {
+            "count": 240,
+            "mae": 0.529096,
+            "mean_oracle_risk": 0.345365,
+            "expected_failures_top10pct": 4.8825
+          },
+          "directory_migration": {
+            "count": 240,
+            "mae": 0.486882,
+            "mean_oracle_risk": 0.366149,
+            "expected_failures_top10pct": 4.905
+          },
+          "snapshot_batch": {
+            "count": 240,
+            "mae": 0.316024,
+            "mean_oracle_risk": 0.72063,
+            "expected_failures_top10pct": 12.280653
+          }
+        }
+      }
+    },
+    {
+      "training_seed": 29,
+      "training_samples": 5000,
+      "epochs": 5,
+      "selected_epoch": 3,
+      "best_validation_mae": 0.02235,
+      "models": {
+        "GNN v0.8 operand-aware": {
+          "count": 1440,
+          "mean_oracle_risk": 0.50384,
+          "mae_to_oracle": 0.10355,
+          "rmse_to_oracle": 0.15901,
+          "brier_to_sampled_outcome": 0.17941,
+          "spearman_risk_rank": 0.9016,
+          "realized_violations": 684,
+          "sampled_roc_auc": 0.81249,
+          "sampled_average_precision": 0.78078,
+          "prioritization": {
+            "5pct": {
+              "tests": 72,
+              "expected_violations": 67.59,
+              "observed_violations": 65,
+              "oracle_optimal_expected": 71.89
+            },
+            "10pct": {
+              "tests": 144,
+              "expected_violations": 134.08,
+              "observed_violations": 132,
+              "oracle_optimal_expected": 142.06
+            },
+            "20pct": {
+              "tests": 288,
+              "expected_violations": 255.23,
+              "observed_violations": 247,
+              "oracle_optimal_expected": 270.34
+            },
+            "50pct": {
+              "tests": 720,
+              "expected_violations": 537.75,
+              "observed_violations": 508,
+              "oracle_optimal_expected": 549.84
+            }
+          }
+        },
+        "Random Forest": {
+          "count": 1440,
+          "mean_oracle_risk": 0.50384,
+          "mae_to_oracle": 0.2245,
+          "rmse_to_oracle": 0.28998,
+          "brier_to_sampled_outcome": 0.23679,
+          "spearman_risk_rank": 0.53972,
+          "realized_violations": 684,
+          "sampled_roc_auc": 0.67028,
+          "sampled_average_precision": 0.62814,
+          "prioritization": {
+            "5pct": {
+              "tests": 72,
+              "expected_violations": 53.41,
+              "observed_violations": 52,
+              "oracle_optimal_expected": 71.89
+            },
+            "10pct": {
+              "tests": 144,
+              "expected_violations": 108.15,
+              "observed_violations": 101,
+              "oracle_optimal_expected": 142.06
+            },
+            "20pct": {
+              "tests": 288,
+              "expected_violations": 204.54,
+              "observed_violations": 195,
+              "oracle_optimal_expected": 270.34
+            },
+            "50pct": {
+              "tests": 720,
+              "expected_violations": 468.58,
+              "observed_violations": 435,
+              "oracle_optimal_expected": 549.84
+            }
+          }
+        },
+        "HistGradientBoosting": {
+          "count": 1440,
+          "mean_oracle_risk": 0.50384,
+          "mae_to_oracle": 0.2068,
+          "rmse_to_oracle": 0.26339,
+          "brier_to_sampled_outcome": 0.22581,
+          "spearman_risk_rank": 0.55627,
+          "realized_violations": 684,
+          "sampled_roc_auc": 0.67904,
+          "sampled_average_precision": 0.62497,
+          "prioritization": {
+            "5pct": {
+              "tests": 72,
+              "expected_violations": 56.47,
+              "observed_violations": 53,
+              "oracle_optimal_expected": 71.89
+            },
+            "10pct": {
+              "tests": 144,
+              "expected_violations": 105.66,
+              "observed_violations": 100,
+              "oracle_optimal_expected": 142.06
+            },
+            "20pct": {
+              "tests": 288,
+              "expected_violations": 207.31,
+              "observed_violations": 194,
+              "oracle_optimal_expected": 270.34
+            },
+            "50pct": {
+              "tests": 720,
+              "expected_violations": 461.87,
+              "observed_violations": 431,
+              "oracle_optimal_expected": 549.84
+            }
+          }
+        },
+        "XGBoost": {
+          "count": 1440,
+          "mean_oracle_risk": 0.50384,
+          "mae_to_oracle": 0.20256,
+          "rmse_to_oracle": 0.26743,
+          "brier_to_sampled_outcome": 0.23067,
+          "spearman_risk_rank": 0.53326,
+          "realized_violations": 684,
+          "sampled_roc_auc": 0.67082,
+          "sampled_average_precision": 0.62608,
+          "prioritization": {
+            "5pct": {
+              "tests": 72,
+              "expected_violations": 55.15,
+              "observed_violations": 50,
+              "oracle_optimal_expected": 71.89
+            },
+            "10pct": {
+              "tests": 144,
+              "expected_violations": 107.06,
+              "observed_violations": 98,
+              "oracle_optimal_expected": 142.06
+            },
+            "20pct": {
+              "tests": 288,
+              "expected_violations": 204.97,
+              "observed_violations": 188,
+              "oracle_optimal_expected": 270.34
+            },
+            "50pct": {
+              "tests": 720,
+              "expected_violations": 458.48,
+              "observed_violations": 431,
+              "oracle_optimal_expected": 549.84
+            }
+          }
+        },
+        "Ridge (graph statistics)": {
+          "count": 1440,
+          "mean_oracle_risk": 0.50384,
+          "mae_to_oracle": 0.35119,
+          "rmse_to_oracle": 0.44636,
+          "brier_to_sampled_outcome": 0.36501,
+          "spearman_risk_rank": 0.05353,
+          "realized_violations": 684,
+          "sampled_roc_auc": 0.51026,
+          "sampled_average_precision": 0.49124,
+          "prioritization": {
+            "5pct": {
+              "tests": 72,
+              "expected_violations": 42.45,
+              "observed_violations": 42,
+              "oracle_optimal_expected": 71.89
+            },
+            "10pct": {
+              "tests": 144,
+              "expected_violations": 70.62,
+              "observed_violations": 71,
+              "oracle_optimal_expected": 142.06
+            },
+            "20pct": {
+              "tests": 288,
+              "expected_violations": 150.44,
+              "observed_violations": 148,
+              "oracle_optimal_expected": 270.34
+            },
+            "50pct": {
+              "tests": 720,
+              "expected_violations": 389.15,
+              "observed_violations": 361,
+              "oracle_optimal_expected": 549.84
+            }
+          }
+        },
+        "Pending-writeback heuristic": {
+          "count": 1440,
+          "mean_oracle_risk": 0.50384,
+          "mae_to_oracle": 0.42977,
+          "rmse_to_oracle": 0.50118,
+          "brier_to_sampled_outcome": 0.42308,
+          "spearman_risk_rank": -0.17113,
+          "realized_violations": 684,
+          "sampled_roc_auc": 0.44345,
+          "sampled_average_precision": 0.44455,
+          "prioritization": {
+            "5pct": {
+              "tests": 72,
+              "expected_violations": 28.53,
+              "observed_violations": 32,
+              "oracle_optimal_expected": 71.89
+            },
+            "10pct": {
+              "tests": 144,
+              "expected_violations": 51.54,
+              "observed_violations": 58,
+              "oracle_optimal_expected": 142.06
+            },
+            "20pct": {
+              "tests": 288,
+              "expected_violations": 115.94,
+              "observed_violations": 115,
+              "oracle_optimal_expected": 270.34
+            },
+            "50pct": {
+              "tests": 720,
+              "expected_violations": 322.8,
+              "observed_violations": 305,
+              "oracle_optimal_expected": 549.84
+            }
+          }
+        }
+      },
+      "by_family": {
+        "GNN v0.8 operand-aware": {
+          "editor_autosave": {
+            "count": 240,
+            "mae": 0.045652,
+            "mean_oracle_risk": 0.439867,
+            "expected_failures_top10pct": 21.0743
+          },
+          "package_upgrade": {
+            "count": 240,
+            "mae": 0.178516,
+            "mean_oracle_risk": 0.758413,
+            "expected_failures_top10pct": 23.448579
+          },
+          "mirrored_alias_rotation": {
+            "count": 240,
+            "mae": 0.122385,
+            "mean_oracle_risk": 0.39261,
+            "expected_failures_top10pct": 20.47
+          },
+          "manifest_publication": {
+            "count": 240,
+            "mae": 0.044315,
+            "mean_oracle_risk": 0.345365,
+            "expected_failures_top10pct": 21.0999
+          },
+          "directory_migration": {
+            "count": 240,
+            "mae": 0.015103,
+            "mean_oracle_risk": 0.366149,
+            "expected_failures_top10pct": 20.47
+          },
+          "snapshot_batch": {
+            "count": 240,
+            "mae": 0.215314,
+            "mean_oracle_risk": 0.72063,
+            "expected_failures_top10pct": 23.073531
+          }
+        },
+        "Random Forest": {
+          "editor_autosave": {
+            "count": 240,
+            "mae": 0.188273,
+            "mean_oracle_risk": 0.439867,
+            "expected_failures_top10pct": 14.9489
+          },
+          "package_upgrade": {
+            "count": 240,
+            "mae": 0.351432,
+            "mean_oracle_risk": 0.758413,
+            "expected_failures_top10pct": 21.352538
+          },
+          "mirrored_alias_rotation": {
+            "count": 240,
+            "mae": 0.213381,
+            "mean_oracle_risk": 0.39261,
+            "expected_failures_top10pct": 6.9594
+          },
+          "manifest_publication": {
+            "count": 240,
+            "mae": 0.148214,
+            "mean_oracle_risk": 0.345365,
+            "expected_failures_top10pct": 18.8536
+          },
+          "directory_migration": {
+            "count": 240,
+            "mae": 0.108614,
+            "mean_oracle_risk": 0.366149,
+            "expected_failures_top10pct": 20.08
+          },
+          "snapshot_batch": {
+            "count": 240,
+            "mae": 0.337066,
+            "mean_oracle_risk": 0.72063,
+            "expected_failures_top10pct": 23.510672
+          }
+        },
+        "HistGradientBoosting": {
+          "editor_autosave": {
+            "count": 240,
+            "mae": 0.166822,
+            "mean_oracle_risk": 0.439867,
+            "expected_failures_top10pct": 13.9393
+          },
+          "package_upgrade": {
+            "count": 240,
+            "mae": 0.277398,
+            "mean_oracle_risk": 0.758413,
+            "expected_failures_top10pct": 22.216194
+          },
+          "mirrored_alias_rotation": {
+            "count": 240,
+            "mae": 0.176151,
+            "mean_oracle_risk": 0.39261,
+            "expected_failures_top10pct": 9.9008
+          },
+          "manifest_publication": {
+            "count": 240,
+            "mae": 0.164702,
+            "mean_oracle_risk": 0.345365,
+            "expected_failures_top10pct": 20.4699
+          },
+          "directory_migration": {
+            "count": 240,
+            "mae": 0.146995,
+            "mean_oracle_risk": 0.366149,
+            "expected_failures_top10pct": 13.49
+          },
+          "snapshot_batch": {
+            "count": 240,
+            "mae": 0.308706,
+            "mean_oracle_risk": 0.72063,
+            "expected_failures_top10pct": 23.53778
+          }
+        },
+        "XGBoost": {
+          "editor_autosave": {
+            "count": 240,
+            "mae": 0.164723,
+            "mean_oracle_risk": 0.439867,
+            "expected_failures_top10pct": 14.1686
+          },
+          "package_upgrade": {
+            "count": 240,
+            "mae": 0.254153,
+            "mean_oracle_risk": 0.758413,
+            "expected_failures_top10pct": 21.285444
+          },
+          "mirrored_alias_rotation": {
+            "count": 240,
+            "mae": 0.190252,
+            "mean_oracle_risk": 0.39261,
+            "expected_failures_top10pct": 9.1244
+          },
+          "manifest_publication": {
+            "count": 240,
+            "mae": 0.155494,
+            "mean_oracle_risk": 0.345365,
+            "expected_failures_top10pct": 19.2549
+          },
+          "directory_migration": {
+            "count": 240,
+            "mae": 0.165342,
+            "mean_oracle_risk": 0.366149,
+            "expected_failures_top10pct": 10.66
+          },
+          "snapshot_batch": {
+            "count": 240,
+            "mae": 0.285378,
+            "mean_oracle_risk": 0.72063,
+            "expected_failures_top10pct": 23.313755
+          }
+        },
+        "Ridge (graph statistics)": {
+          "editor_autosave": {
+            "count": 240,
+            "mae": 0.263014,
+            "mean_oracle_risk": 0.439867,
+            "expected_failures_top10pct": 13.36045
+          },
+          "package_upgrade": {
+            "count": 240,
+            "mae": 0.157714,
+            "mean_oracle_risk": 0.758413,
+            "expected_failures_top10pct": 23.157017
+          },
+          "mirrored_alias_rotation": {
+            "count": 240,
+            "mae": 0.581012,
+            "mean_oracle_risk": 0.39261,
+            "expected_failures_top10pct": 11.7662
+          },
+          "manifest_publication": {
+            "count": 240,
+            "mae": 0.232706,
+            "mean_oracle_risk": 0.345365,
+            "expected_failures_top10pct": 16.5375
+          },
+          "directory_migration": {
+            "count": 240,
+            "mae": 0.257437,
+            "mean_oracle_risk": 0.366149,
+            "expected_failures_top10pct": 15.3662
+          },
+          "snapshot_batch": {
+            "count": 240,
+            "mae": 0.615261,
+            "mean_oracle_risk": 0.72063,
+            "expected_failures_top10pct": 14.1576
+          }
+        },
+        "Pending-writeback heuristic": {
+          "editor_autosave": {
+            "count": 240,
+            "mae": 0.449951,
+            "mean_oracle_risk": 0.439867,
+            "expected_failures_top10pct": 7.02375
+          },
+          "package_upgrade": {
+            "count": 240,
+            "mae": 0.299607,
+            "mean_oracle_risk": 0.758413,
+            "expected_failures_top10pct": 12.661801
+          },
+          "mirrored_alias_rotation": {
+            "count": 240,
+            "mae": 0.49709,
+            "mean_oracle_risk": 0.39261,
+            "expected_failures_top10pct": 4.935
+          },
+          "manifest_publication": {
+            "count": 240,
+            "mae": 0.529096,
+            "mean_oracle_risk": 0.345365,
+            "expected_failures_top10pct": 4.8825
+          },
+          "directory_migration": {
+            "count": 240,
+            "mae": 0.486882,
+            "mean_oracle_risk": 0.366149,
+            "expected_failures_top10pct": 4.905
+          },
+          "snapshot_batch": {
+            "count": 240,
+            "mae": 0.316024,
+            "mean_oracle_risk": 0.72063,
+            "expected_failures_top10pct": 12.280653
+          }
+        }
+      }
+    },
+    {
+      "training_seed": 47,
+      "training_samples": 5000,
+      "epochs": 5,
+      "selected_epoch": 5,
+      "best_validation_mae": 0.01907,
+      "models": {
+        "GNN v0.8 operand-aware": {
+          "count": 1440,
+          "mean_oracle_risk": 0.50384,
+          "mae_to_oracle": 0.11283,
+          "rmse_to_oracle": 0.16002,
+          "brier_to_sampled_outcome": 0.17846,
+          "spearman_risk_rank": 0.91377,
+          "realized_violations": 684,
+          "sampled_roc_auc": 0.81763,
+          "sampled_average_precision": 0.7979,
+          "prioritization": {
+            "5pct": {
+              "tests": 72,
+              "expected_violations": 69.07,
+              "observed_violations": 66,
+              "oracle_optimal_expected": 71.89
+            },
+            "10pct": {
+              "tests": 144,
+              "expected_violations": 136.38,
+              "observed_violations": 134,
+              "oracle_optimal_expected": 142.06
+            },
+            "20pct": {
+              "tests": 288,
+              "expected_violations": 259.35,
+              "observed_violations": 251,
+              "oracle_optimal_expected": 270.34
+            },
+            "50pct": {
+              "tests": 720,
+              "expected_violations": 537.59,
+              "observed_violations": 510,
+              "oracle_optimal_expected": 549.84
+            }
+          }
+        },
+        "Random Forest": {
+          "count": 1440,
+          "mean_oracle_risk": 0.50384,
+          "mae_to_oracle": 0.20832,
+          "rmse_to_oracle": 0.26973,
+          "brier_to_sampled_outcome": 0.227,
+          "spearman_risk_rank": 0.5877,
+          "realized_violations": 684,
+          "sampled_roc_auc": 0.68998,
+          "sampled_average_precision": 0.6579,
+          "prioritization": {
+            "5pct": {
+              "tests": 72,
+              "expected_violations": 63.04,
+              "observed_violations": 61,
+              "oracle_optimal_expected": 71.89
+            },
+            "10pct": {
+              "tests": 144,
+              "expected_violations": 117.88,
+              "observed_violations": 116,
+              "oracle_optimal_expected": 142.06
+            },
+            "20pct": {
+              "tests": 288,
+              "expected_violations": 211.03,
+              "observed_violations": 202,
+              "oracle_optimal_expected": 270.34
+            },
+            "50pct": {
+              "tests": 720,
+              "expected_violations": 471.79,
+              "observed_violations": 440,
+              "oracle_optimal_expected": 549.84
+            }
+          }
+        },
+        "HistGradientBoosting": {
+          "count": 1440,
+          "mean_oracle_risk": 0.50384,
+          "mae_to_oracle": 0.19954,
+          "rmse_to_oracle": 0.2598,
+          "brier_to_sampled_outcome": 0.2229,
+          "spearman_risk_rank": 0.57561,
+          "realized_violations": 684,
+          "sampled_roc_auc": 0.68954,
+          "sampled_average_precision": 0.65003,
+          "prioritization": {
+            "5pct": {
+              "tests": 72,
+              "expected_violations": 60.02,
+              "observed_violations": 60,
+              "oracle_optimal_expected": 71.89
+            },
+            "10pct": {
+              "tests": 144,
+              "expected_violations": 115.68,
+              "observed_violations": 109,
+              "oracle_optimal_expected": 142.06
+            },
+            "20pct": {
+              "tests": 288,
+              "expected_violations": 213.0,
+              "observed_violations": 203,
+              "oracle_optimal_expected": 270.34
+            },
+            "50pct": {
+              "tests": 720,
+              "expected_violations": 460.96,
+              "observed_violations": 433,
+              "oracle_optimal_expected": 549.84
+            }
+          }
+        },
+        "XGBoost": {
+          "count": 1440,
+          "mean_oracle_risk": 0.50384,
+          "mae_to_oracle": 0.1873,
+          "rmse_to_oracle": 0.25298,
+          "brier_to_sampled_outcome": 0.21998,
+          "spearman_risk_rank": 0.60118,
+          "realized_violations": 684,
+          "sampled_roc_auc": 0.70094,
+          "sampled_average_precision": 0.67216,
+          "prioritization": {
+            "5pct": {
+              "tests": 72,
+              "expected_violations": 60.42,
+              "observed_violations": 59,
+              "oracle_optimal_expected": 71.89
+            },
+            "10pct": {
+              "tests": 144,
+              "expected_violations": 118.8,
+              "observed_violations": 112,
+              "oracle_optimal_expected": 142.06
+            },
+            "20pct": {
+              "tests": 288,
+              "expected_violations": 226.07,
+              "observed_violations": 213,
+              "oracle_optimal_expected": 270.34
+            },
+            "50pct": {
+              "tests": 720,
+              "expected_violations": 466.63,
+              "observed_violations": 439,
+              "oracle_optimal_expected": 549.84
+            }
+          }
+        },
+        "Ridge (graph statistics)": {
+          "count": 1440,
+          "mean_oracle_risk": 0.50384,
+          "mae_to_oracle": 0.35806,
+          "rmse_to_oracle": 0.44965,
+          "brier_to_sampled_outcome": 0.36661,
+          "spearman_risk_rank": 0.0046,
+          "realized_violations": 684,
+          "sampled_roc_auc": 0.48902,
+          "sampled_average_precision": 0.47828,
+          "prioritization": {
+            "5pct": {
+              "tests": 72,
+              "expected_violations": 36.46,
+              "observed_violations": 37,
+              "oracle_optimal_expected": 71.89
+            },
+            "10pct": {
+              "tests": 144,
+              "expected_violations": 68.18,
+              "observed_violations": 71,
+              "oracle_optimal_expected": 142.06
+            },
+            "20pct": {
+              "tests": 288,
+              "expected_violations": 142.25,
+              "observed_violations": 138,
+              "oracle_optimal_expected": 270.34
+            },
+            "50pct": {
+              "tests": 720,
+              "expected_violations": 388.19,
+              "observed_violations": 359,
+              "oracle_optimal_expected": 549.84
+            }
+          }
+        },
+        "Pending-writeback heuristic": {
+          "count": 1440,
+          "mean_oracle_risk": 0.50384,
+          "mae_to_oracle": 0.42977,
+          "rmse_to_oracle": 0.50118,
+          "brier_to_sampled_outcome": 0.42308,
+          "spearman_risk_rank": -0.17113,
+          "realized_violations": 684,
+          "sampled_roc_auc": 0.44345,
+          "sampled_average_precision": 0.44455,
+          "prioritization": {
+            "5pct": {
+              "tests": 72,
+              "expected_violations": 28.53,
+              "observed_violations": 32,
+              "oracle_optimal_expected": 71.89
+            },
+            "10pct": {
+              "tests": 144,
+              "expected_violations": 51.54,
+              "observed_violations": 58,
+              "oracle_optimal_expected": 142.06
+            },
+            "20pct": {
+              "tests": 288,
+              "expected_violations": 115.94,
+              "observed_violations": 115,
+              "oracle_optimal_expected": 270.34
+            },
+            "50pct": {
+              "tests": 720,
+              "expected_violations": 322.8,
+              "observed_violations": 305,
+              "oracle_optimal_expected": 549.84
+            }
+          }
+        }
+      },
+      "by_family": {
+        "GNN v0.8 operand-aware": {
+          "editor_autosave": {
+            "count": 240,
+            "mae": 0.056967,
+            "mean_oracle_risk": 0.439867,
+            "expected_failures_top10pct": 21.0743
+          },
+          "package_upgrade": {
+            "count": 240,
+            "mae": 0.196845,
+            "mean_oracle_risk": 0.758413,
+            "expected_failures_top10pct": 23.764546
+          },
+          "mirrored_alias_rotation": {
+            "count": 240,
+            "mae": 0.12769,
+            "mean_oracle_risk": 0.39261,
+            "expected_failures_top10pct": 20.47
+          },
+          "manifest_publication": {
+            "count": 240,
+            "mae": 0.069374,
+            "mean_oracle_risk": 0.345365,
+            "expected_failures_top10pct": 21.4599
+          },
+          "directory_migration": {
+            "count": 240,
+            "mae": 0.023079,
+            "mean_oracle_risk": 0.366149,
+            "expected_failures_top10pct": 20.47
+          },
+          "snapshot_batch": {
+            "count": 240,
+            "mae": 0.203009,
+            "mean_oracle_risk": 0.72063,
+            "expected_failures_top10pct": 23.803419
+          }
+        },
+        "Random Forest": {
+          "editor_autosave": {
+            "count": 240,
+            "mae": 0.179017,
+            "mean_oracle_risk": 0.439867,
+            "expected_failures_top10pct": 16.1487
+          },
+          "package_upgrade": {
+            "count": 240,
+            "mae": 0.302116,
+            "mean_oracle_risk": 0.758413,
+            "expected_failures_top10pct": 23.59011
+          },
+          "mirrored_alias_rotation": {
+            "count": 240,
+            "mae": 0.195911,
+            "mean_oracle_risk": 0.39261,
+            "expected_failures_top10pct": 11.1746
+          },
+          "manifest_publication": {
+            "count": 240,
+            "mae": 0.132767,
+            "mean_oracle_risk": 0.345365,
+            "expected_failures_top10pct": 21.3849
+          },
+          "directory_migration": {
+            "count": 240,
+            "mae": 0.105166,
+            "mean_oracle_risk": 0.366149,
+            "expected_failures_top10pct": 20.21
+          },
+          "snapshot_batch": {
+            "count": 240,
+            "mae": 0.334951,
+            "mean_oracle_risk": 0.72063,
+            "expected_failures_top10pct": 22.643334
+          }
+        },
+        "HistGradientBoosting": {
+          "editor_autosave": {
+            "count": 240,
+            "mae": 0.155979,
+            "mean_oracle_risk": 0.439867,
+            "expected_failures_top10pct": 16.3518
+          },
+          "package_upgrade": {
+            "count": 240,
+            "mae": 0.263145,
+            "mean_oracle_risk": 0.758413,
+            "expected_failures_top10pct": 21.601469
+          },
+          "mirrored_alias_rotation": {
+            "count": 240,
+            "mae": 0.166522,
+            "mean_oracle_risk": 0.39261,
+            "expected_failures_top10pct": 14.8824
+          },
+          "manifest_publication": {
+            "count": 240,
+            "mae": 0.137988,
+            "mean_oracle_risk": 0.345365,
+            "expected_failures_top10pct": 20.7724
+          },
+          "directory_migration": {
+            "count": 240,
+            "mae": 0.140228,
+            "mean_oracle_risk": 0.366149,
+            "expected_failures_top10pct": 16.66
+          },
+          "snapshot_batch": {
+            "count": 240,
+            "mae": 0.333357,
+            "mean_oracle_risk": 0.72063,
+            "expected_failures_top10pct": 22.805216
+          }
+        },
+        "XGBoost": {
+          "editor_autosave": {
+            "count": 240,
+            "mae": 0.162874,
+            "mean_oracle_risk": 0.439867,
+            "expected_failures_top10pct": 15.1842
+          },
+          "package_upgrade": {
+            "count": 240,
+            "mae": 0.215687,
+            "mean_oracle_risk": 0.758413,
+            "expected_failures_top10pct": 21.945527
+          },
+          "mirrored_alias_rotation": {
+            "count": 240,
+            "mae": 0.155314,
+            "mean_oracle_risk": 0.39261,
+            "expected_failures_top10pct": 16.5224
+          },
+          "manifest_publication": {
+            "count": 240,
+            "mae": 0.138974,
+            "mean_oracle_risk": 0.345365,
+            "expected_failures_top10pct": 19.6368
+          },
+          "directory_migration": {
+            "count": 240,
+            "mae": 0.150493,
+            "mean_oracle_risk": 0.366149,
+            "expected_failures_top10pct": 17.15
+          },
+          "snapshot_batch": {
+            "count": 240,
+            "mae": 0.300429,
+            "mean_oracle_risk": 0.72063,
+            "expected_failures_top10pct": 22.653508
+          }
+        },
+        "Ridge (graph statistics)": {
+          "editor_autosave": {
+            "count": 240,
+            "mae": 0.244781,
+            "mean_oracle_risk": 0.439867,
+            "expected_failures_top10pct": 13.737
+          },
+          "package_upgrade": {
+            "count": 240,
+            "mae": 0.210421,
+            "mean_oracle_risk": 0.758413,
+            "expected_failures_top10pct": 23.115316
+          },
+          "mirrored_alias_rotation": {
+            "count": 240,
+            "mae": 0.573219,
+            "mean_oracle_risk": 0.39261,
+            "expected_failures_top10pct": 11.8112
+          },
+          "manifest_publication": {
+            "count": 240,
+            "mae": 0.21559,
+            "mean_oracle_risk": 0.345365,
+            "expected_failures_top10pct": 14.5431
+          },
+          "directory_migration": {
+            "count": 240,
+            "mae": 0.252164,
+            "mean_oracle_risk": 0.366149,
+            "expected_failures_top10pct": 15.9674
+          },
+          "snapshot_batch": {
+            "count": 240,
+            "mae": 0.652166,
+            "mean_oracle_risk": 0.72063,
+            "expected_failures_top10pct": 14.331788
+          }
+        },
+        "Pending-writeback heuristic": {
+          "editor_autosave": {
+            "count": 240,
+            "mae": 0.449951,
+            "mean_oracle_risk": 0.439867,
+            "expected_failures_top10pct": 7.02375
+          },
+          "package_upgrade": {
+            "count": 240,
+            "mae": 0.299607,
+            "mean_oracle_risk": 0.758413,
+            "expected_failures_top10pct": 12.661801
+          },
+          "mirrored_alias_rotation": {
+            "count": 240,
+            "mae": 0.49709,
+            "mean_oracle_risk": 0.39261,
+            "expected_failures_top10pct": 4.935
+          },
+          "manifest_publication": {
+            "count": 240,
+            "mae": 0.529096,
+            "mean_oracle_risk": 0.345365,
+            "expected_failures_top10pct": 4.8825
+          },
+          "directory_migration": {
+            "count": 240,
+            "mae": 0.486882,
+            "mean_oracle_risk": 0.366149,
+            "expected_failures_top10pct": 4.905
+          },
+          "snapshot_batch": {
+            "count": 240,
+            "mae": 0.316024,
+            "mean_oracle_risk": 0.72063,
+            "expected_failures_top10pct": 12.280653
+          }
+        }
+      }
+    },
+    {
+      "training_seed": 83,
+      "training_samples": 5000,
+      "epochs": 5,
+      "selected_epoch": 5,
+      "best_validation_mae": 0.02235,
+      "models": {
+        "GNN v0.8 operand-aware": {
+          "count": 1440,
+          "mean_oracle_risk": 0.50384,
+          "mae_to_oracle": 0.13496,
+          "rmse_to_oracle": 0.20316,
+          "brier_to_sampled_outcome": 0.19904,
+          "spearman_risk_rank": 0.82274,
+          "realized_violations": 684,
+          "sampled_roc_auc": 0.77049,
+          "sampled_average_precision": 0.75396,
+          "prioritization": {
+            "5pct": {
+              "tests": 72,
+              "expected_violations": 66.9,
+              "observed_violations": 66,
+              "oracle_optimal_expected": 71.89
+            },
+            "10pct": {
+              "tests": 144,
+              "expected_violations": 131.87,
+              "observed_violations": 130,
+              "oracle_optimal_expected": 142.06
+            },
+            "20pct": {
+              "tests": 288,
+              "expected_violations": 255.62,
+              "observed_violations": 239,
+              "oracle_optimal_expected": 270.34
+            },
+            "50pct": {
+              "tests": 720,
+              "expected_violations": 517.48,
+              "observed_violations": 489,
+              "oracle_optimal_expected": 549.84
+            }
+          }
+        },
+        "Random Forest": {
+          "count": 1440,
+          "mean_oracle_risk": 0.50384,
+          "mae_to_oracle": 0.20801,
+          "rmse_to_oracle": 0.26798,
+          "brier_to_sampled_outcome": 0.22685,
+          "spearman_risk_rank": 0.58603,
+          "realized_violations": 684,
+          "sampled_roc_auc": 0.68647,
+          "sampled_average_precision": 0.65661,
+          "prioritization": {
+            "5pct": {
+              "tests": 72,
+              "expected_violations": 58.33,
+              "observed_violations": 59,
+              "oracle_optimal_expected": 71.89
+            },
+            "10pct": {
+              "tests": 144,
+              "expected_violations": 115.42,
+              "observed_violations": 110,
+              "oracle_optimal_expected": 142.06
+            },
+            "20pct": {
+              "tests": 288,
+              "expected_violations": 213.75,
+              "observed_violations": 200,
+              "oracle_optimal_expected": 270.34
+            },
+            "50pct": {
+              "tests": 720,
+              "expected_violations": 468.78,
+              "observed_violations": 436,
+              "oracle_optimal_expected": 549.84
+            }
+          }
+        },
+        "HistGradientBoosting": {
+          "count": 1440,
+          "mean_oracle_risk": 0.50384,
+          "mae_to_oracle": 0.20788,
+          "rmse_to_oracle": 0.27119,
+          "brier_to_sampled_outcome": 0.22938,
+          "spearman_risk_rank": 0.52502,
+          "realized_violations": 684,
+          "sampled_roc_auc": 0.66704,
+          "sampled_average_precision": 0.62474,
+          "prioritization": {
+            "5pct": {
+              "tests": 72,
+              "expected_violations": 58.77,
+              "observed_violations": 56,
+              "oracle_optimal_expected": 71.89
+            },
+            "10pct": {
+              "tests": 144,
+              "expected_violations": 112.51,
+              "observed_violations": 104,
+              "oracle_optimal_expected": 142.06
+            },
+            "20pct": {
+              "tests": 288,
+              "expected_violations": 209.69,
+              "observed_violations": 199,
+              "oracle_optimal_expected": 270.34
+            },
+            "50pct": {
+              "tests": 720,
+              "expected_violations": 448.94,
+              "observed_violations": 418,
+              "oracle_optimal_expected": 549.84
+            }
+          }
+        },
+        "XGBoost": {
+          "count": 1440,
+          "mean_oracle_risk": 0.50384,
+          "mae_to_oracle": 0.2121,
+          "rmse_to_oracle": 0.28163,
+          "brier_to_sampled_outcome": 0.23679,
+          "spearman_risk_rank": 0.475,
+          "realized_violations": 684,
+          "sampled_roc_auc": 0.65052,
+          "sampled_average_precision": 0.60642,
+          "prioritization": {
+            "5pct": {
+              "tests": 72,
+              "expected_violations": 56.63,
+              "observed_violations": 53,
+              "oracle_optimal_expected": 71.89
+            },
+            "10pct": {
+              "tests": 144,
+              "expected_violations": 105.86,
+              "observed_violations": 97,
+              "oracle_optimal_expected": 142.06
+            },
+            "20pct": {
+              "tests": 288,
+              "expected_violations": 207.91,
+              "observed_violations": 191,
+              "oracle_optimal_expected": 270.34
+            },
+            "50pct": {
+              "tests": 720,
+              "expected_violations": 440.32,
+              "observed_violations": 416,
+              "oracle_optimal_expected": 549.84
+            }
+          }
+        },
+        "Ridge (graph statistics)": {
+          "count": 1440,
+          "mean_oracle_risk": 0.50384,
+          "mae_to_oracle": 0.34796,
+          "rmse_to_oracle": 0.43721,
+          "brier_to_sampled_outcome": 0.35037,
+          "spearman_risk_rank": 0.00541,
+          "realized_violations": 684,
+          "sampled_roc_auc": 0.49153,
+          "sampled_average_precision": 0.48435,
+          "prioritization": {
+            "5pct": {
+              "tests": 72,
+              "expected_violations": 35.78,
+              "observed_violations": 36,
+              "oracle_optimal_expected": 71.89
+            },
+            "10pct": {
+              "tests": 144,
+              "expected_violations": 70.73,
+              "observed_violations": 75,
+              "oracle_optimal_expected": 142.06
+            },
+            "20pct": {
+              "tests": 288,
+              "expected_violations": 143.46,
+              "observed_violations": 138,
+              "oracle_optimal_expected": 270.34
+            },
+            "50pct": {
+              "tests": 720,
+              "expected_violations": 385.65,
+              "observed_violations": 359,
+              "oracle_optimal_expected": 549.84
+            }
+          }
+        },
+        "Pending-writeback heuristic": {
+          "count": 1440,
+          "mean_oracle_risk": 0.50384,
+          "mae_to_oracle": 0.42977,
+          "rmse_to_oracle": 0.50118,
+          "brier_to_sampled_outcome": 0.42308,
+          "spearman_risk_rank": -0.17113,
+          "realized_violations": 684,
+          "sampled_roc_auc": 0.44345,
+          "sampled_average_precision": 0.44455,
+          "prioritization": {
+            "5pct": {
+              "tests": 72,
+              "expected_violations": 28.53,
+              "observed_violations": 32,
+              "oracle_optimal_expected": 71.89
+            },
+            "10pct": {
+              "tests": 144,
+              "expected_violations": 51.54,
+              "observed_violations": 58,
+              "oracle_optimal_expected": 142.06
+            },
+            "20pct": {
+              "tests": 288,
+              "expected_violations": 115.94,
+              "observed_violations": 115,
+              "oracle_optimal_expected": 270.34
+            },
+            "50pct": {
+              "tests": 720,
+              "expected_violations": 322.8,
+              "observed_violations": 305,
+              "oracle_optimal_expected": 549.84
+            }
+          }
+        }
+      },
+      "by_family": {
+        "GNN v0.8 operand-aware": {
+          "editor_autosave": {
+            "count": 240,
+            "mae": 0.056094,
+            "mean_oracle_risk": 0.439867,
+            "expected_failures_top10pct": 21.0743
+          },
+          "package_upgrade": {
+            "count": 240,
+            "mae": 0.190868,
+            "mean_oracle_risk": 0.758413,
+            "expected_failures_top10pct": 23.914518
+          },
+          "mirrored_alias_rotation": {
+            "count": 240,
+            "mae": 0.225347,
+            "mean_oracle_risk": 0.39261,
+            "expected_failures_top10pct": 12.94
+          },
+          "manifest_publication": {
+            "count": 240,
+            "mae": 0.040179,
+            "mean_oracle_risk": 0.345365,
+            "expected_failures_top10pct": 21.4599
+          },
+          "directory_migration": {
+            "count": 240,
+            "mae": 0.028494,
+            "mean_oracle_risk": 0.366149,
+            "expected_failures_top10pct": 20.47
+          },
+          "snapshot_batch": {
+            "count": 240,
+            "mae": 0.268801,
+            "mean_oracle_risk": 0.72063,
+            "expected_failures_top10pct": 23.339853
+          }
+        },
+        "Random Forest": {
+          "editor_autosave": {
+            "count": 240,
+            "mae": 0.184414,
+            "mean_oracle_risk": 0.439867,
+            "expected_failures_top10pct": 13.7586
+          },
+          "package_upgrade": {
+            "count": 240,
+            "mae": 0.276923,
+            "mean_oracle_risk": 0.758413,
+            "expected_failures_top10pct": 20.888775
+          },
+          "mirrored_alias_rotation": {
+            "count": 240,
+            "mae": 0.194969,
+            "mean_oracle_risk": 0.39261,
+            "expected_failures_top10pct": 8.5944
+          },
+          "manifest_publication": {
+            "count": 240,
+            "mae": 0.143484,
+            "mean_oracle_risk": 0.345365,
+            "expected_failures_top10pct": 21.2624
+          },
+          "directory_migration": {
+            "count": 240,
+            "mae": 0.106642,
+            "mean_oracle_risk": 0.366149,
+            "expected_failures_top10pct": 20.34
+          },
+          "snapshot_batch": {
+            "count": 240,
+            "mae": 0.341604,
+            "mean_oracle_risk": 0.72063,
+            "expected_failures_top10pct": 23.039402
+          }
+        },
+        "HistGradientBoosting": {
+          "editor_autosave": {
+            "count": 240,
+            "mae": 0.155662,
+            "mean_oracle_risk": 0.439867,
+            "expected_failures_top10pct": 14.3535
+          },
+          "package_upgrade": {
+            "count": 240,
+            "mae": 0.291952,
+            "mean_oracle_risk": 0.758413,
+            "expected_failures_top10pct": 22.73533
+          },
+          "mirrored_alias_rotation": {
+            "count": 240,
+            "mae": 0.160593,
+            "mean_oracle_risk": 0.39261,
+            "expected_failures_top10pct": 13.2174
+          },
+          "manifest_publication": {
+            "count": 240,
+            "mae": 0.15342,
+            "mean_oracle_risk": 0.345365,
+            "expected_failures_top10pct": 21.1249
+          },
+          "directory_migration": {
+            "count": 240,
+            "mae": 0.140984,
+            "mean_oracle_risk": 0.366149,
+            "expected_failures_top10pct": 14.01
+          },
+          "snapshot_batch": {
+            "count": 240,
+            "mae": 0.344687,
+            "mean_oracle_risk": 0.72063,
+            "expected_failures_top10pct": 23.552682
+          }
+        },
+        "XGBoost": {
+          "editor_autosave": {
+            "count": 240,
+            "mae": 0.166064,
+            "mean_oracle_risk": 0.439867,
+            "expected_failures_top10pct": 13.4416
+          },
+          "package_upgrade": {
+            "count": 240,
+            "mae": 0.266487,
+            "mean_oracle_risk": 0.758413,
+            "expected_failures_top10pct": 20.494577
+          },
+          "mirrored_alias_rotation": {
+            "count": 240,
+            "mae": 0.167049,
+            "mean_oracle_risk": 0.39261,
+            "expected_failures_top10pct": 13.5122
+          },
+          "manifest_publication": {
+            "count": 240,
+            "mae": 0.161365,
+            "mean_oracle_risk": 0.345365,
+            "expected_failures_top10pct": 20.5799
+          },
+          "directory_migration": {
+            "count": 240,
+            "mae": 0.151441,
+            "mean_oracle_risk": 0.366149,
+            "expected_failures_top10pct": 14.92
+          },
+          "snapshot_batch": {
+            "count": 240,
+            "mae": 0.360186,
+            "mean_oracle_risk": 0.72063,
+            "expected_failures_top10pct": 23.247364
+          }
+        },
+        "Ridge (graph statistics)": {
+          "editor_autosave": {
+            "count": 240,
+            "mae": 0.230409,
+            "mean_oracle_risk": 0.439867,
+            "expected_failures_top10pct": 13.737
+          },
+          "package_upgrade": {
+            "count": 240,
+            "mae": 0.267053,
+            "mean_oracle_risk": 0.758413,
+            "expected_failures_top10pct": 23.109931
+          },
+          "mirrored_alias_rotation": {
+            "count": 240,
+            "mae": 0.521791,
+            "mean_oracle_risk": 0.39261,
+            "expected_failures_top10pct": 13.1874
+          },
+          "manifest_publication": {
+            "count": 240,
+            "mae": 0.196436,
+            "mean_oracle_risk": 0.345365,
+            "expected_failures_top10pct": 15.8706
+          },
+          "directory_migration": {
+            "count": 240,
+            "mae": 0.207415,
+            "mean_oracle_risk": 0.366149,
+            "expected_failures_top10pct": 15.9262
+          },
+          "snapshot_batch": {
+            "count": 240,
+            "mae": 0.664643,
+            "mean_oracle_risk": 0.72063,
+            "expected_failures_top10pct": 14.060025
+          }
+        },
+        "Pending-writeback heuristic": {
+          "editor_autosave": {
+            "count": 240,
+            "mae": 0.449951,
+            "mean_oracle_risk": 0.439867,
+            "expected_failures_top10pct": 7.02375
+          },
+          "package_upgrade": {
+            "count": 240,
+            "mae": 0.299607,
+            "mean_oracle_risk": 0.758413,
+            "expected_failures_top10pct": 12.661801
+          },
+          "mirrored_alias_rotation": {
+            "count": 240,
+            "mae": 0.49709,
+            "mean_oracle_risk": 0.39261,
+            "expected_failures_top10pct": 4.935
+          },
+          "manifest_publication": {
+            "count": 240,
+            "mae": 0.529096,
+            "mean_oracle_risk": 0.345365,
+            "expected_failures_top10pct": 4.8825
+          },
+          "directory_migration": {
+            "count": 240,
+            "mae": 0.486882,
+            "mean_oracle_risk": 0.366149,
+            "expected_failures_top10pct": 4.905
+          },
+          "snapshot_batch": {
+            "count": 240,
+            "mae": 0.316024,
+            "mean_oracle_risk": 0.72063,
+            "expected_failures_top10pct": 12.280653
+          }
+        }
+      }
+    },
+    {
+      "training_seed": 131,
+      "training_samples": 5000,
+      "epochs": 5,
+      "selected_epoch": 5,
+      "best_validation_mae": 0.01326,
+      "models": {
+        "GNN v0.8 operand-aware": {
+          "count": 1440,
+          "mean_oracle_risk": 0.50384,
+          "mae_to_oracle": 0.12846,
+          "rmse_to_oracle": 0.20186,
+          "brier_to_sampled_outcome": 0.19605,
+          "spearman_risk_rank": 0.86231,
+          "realized_violations": 684,
+          "sampled_roc_auc": 0.79195,
+          "sampled_average_precision": 0.7715,
+          "prioritization": {
+            "5pct": {
+              "tests": 72,
+              "expected_violations": 67.84,
+              "observed_violations": 65,
+              "oracle_optimal_expected": 71.89
+            },
+            "10pct": {
+              "tests": 144,
+              "expected_violations": 134.22,
+              "observed_violations": 132,
+              "oracle_optimal_expected": 142.06
+            },
+            "20pct": {
+              "tests": 288,
+              "expected_violations": 257.5,
+              "observed_violations": 245,
+              "oracle_optimal_expected": 270.34
+            },
+            "50pct": {
+              "tests": 720,
+              "expected_violations": 527.41,
+              "observed_violations": 502,
+              "oracle_optimal_expected": 549.84
+            }
+          }
+        },
+        "Random Forest": {
+          "count": 1440,
+          "mean_oracle_risk": 0.50384,
+          "mae_to_oracle": 0.20554,
+          "rmse_to_oracle": 0.26384,
+          "brier_to_sampled_outcome": 0.22505,
+          "spearman_risk_rank": 0.61727,
+          "realized_violations": 684,
+          "sampled_roc_auc": 0.69872,
+          "sampled_average_precision": 0.67038,
+          "prioritization": {
+            "5pct": {
+              "tests": 72,
+              "expected_violations": 59.6,
+              "observed_violations": 57,
+              "oracle_optimal_expected": 71.89
+            },
+            "10pct": {
+              "tests": 144,
+              "expected_violations": 119.93,
+              "observed_violations": 115,
+              "oracle_optimal_expected": 142.06
+            },
+            "20pct": {
+              "tests": 288,
+              "expected_violations": 224.22,
+              "observed_violations": 208,
+              "oracle_optimal_expected": 270.34
+            },
+            "50pct": {
+              "tests": 720,
+              "expected_violations": 478.46,
+              "observed_violations": 446,
+              "oracle_optimal_expected": 549.84
+            }
+          }
+        },
+        "HistGradientBoosting": {
+          "count": 1440,
+          "mean_oracle_risk": 0.50384,
+          "mae_to_oracle": 0.20451,
+          "rmse_to_oracle": 0.26643,
+          "brier_to_sampled_outcome": 0.2286,
+          "spearman_risk_rank": 0.53206,
+          "realized_violations": 684,
+          "sampled_roc_auc": 0.66887,
+          "sampled_average_precision": 0.61822,
+          "prioritization": {
+            "5pct": {
+              "tests": 72,
+              "expected_violations": 55.91,
+              "observed_violations": 52,
+              "oracle_optimal_expected": 71.89
+            },
+            "10pct": {
+              "tests": 144,
+              "expected_violations": 105.79,
+              "observed_violations": 99,
+              "oracle_optimal_expected": 142.06
+            },
+            "20pct": {
+              "tests": 288,
+              "expected_violations": 202.74,
+              "observed_violations": 191,
+              "oracle_optimal_expected": 270.34
+            },
+            "50pct": {
+              "tests": 720,
+              "expected_violations": 457.53,
+              "observed_violations": 422,
+              "oracle_optimal_expected": 549.84
+            }
+          }
+        },
+        "XGBoost": {
+          "count": 1440,
+          "mean_oracle_risk": 0.50384,
+          "mae_to_oracle": 0.19529,
+          "rmse_to_oracle": 0.26094,
+          "brier_to_sampled_outcome": 0.22614,
+          "spearman_risk_rank": 0.55484,
+          "realized_violations": 684,
+          "sampled_roc_auc": 0.67882,
+          "sampled_average_precision": 0.65025,
+          "prioritization": {
+            "5pct": {
+              "tests": 72,
+              "expected_violations": 62.39,
+              "observed_violations": 59,
+              "oracle_optimal_expected": 71.89
+            },
+            "10pct": {
+              "tests": 144,
+              "expected_violations": 117.2,
+              "observed_violations": 110,
+              "oracle_optimal_expected": 142.06
+            },
+            "20pct": {
+              "tests": 288,
+              "expected_violations": 216.57,
+              "observed_violations": 206,
+              "oracle_optimal_expected": 270.34
+            },
+            "50pct": {
+              "tests": 720,
+              "expected_violations": 457.21,
+              "observed_violations": 432,
+              "oracle_optimal_expected": 549.84
+            }
+          }
+        },
+        "Ridge (graph statistics)": {
+          "count": 1440,
+          "mean_oracle_risk": 0.50384,
+          "mae_to_oracle": 0.33807,
+          "rmse_to_oracle": 0.43189,
+          "brier_to_sampled_outcome": 0.34707,
+          "spearman_risk_rank": 0.06455,
+          "realized_violations": 684,
+          "sampled_roc_auc": 0.51644,
+          "sampled_average_precision": 0.49612,
+          "prioritization": {
+            "5pct": {
+              "tests": 72,
+              "expected_violations": 34.6,
+              "observed_violations": 34,
+              "oracle_optimal_expected": 71.89
+            },
+            "10pct": {
+              "tests": 144,
+              "expected_violations": 67.96,
+              "observed_violations": 70,
+              "oracle_optimal_expected": 142.06
+            },
+            "20pct": {
+              "tests": 288,
+              "expected_violations": 147.76,
+              "observed_violations": 147,
+              "oracle_optimal_expected": 270.34
+            },
+            "50pct": {
+              "tests": 720,
+              "expected_violations": 399.24,
+              "observed_violations": 375,
+              "oracle_optimal_expected": 549.84
+            }
+          }
+        },
+        "Pending-writeback heuristic": {
+          "count": 1440,
+          "mean_oracle_risk": 0.50384,
+          "mae_to_oracle": 0.42977,
+          "rmse_to_oracle": 0.50118,
+          "brier_to_sampled_outcome": 0.42308,
+          "spearman_risk_rank": -0.17113,
+          "realized_violations": 684,
+          "sampled_roc_auc": 0.44345,
+          "sampled_average_precision": 0.44455,
+          "prioritization": {
+            "5pct": {
+              "tests": 72,
+              "expected_violations": 28.53,
+              "observed_violations": 32,
+              "oracle_optimal_expected": 71.89
+            },
+            "10pct": {
+              "tests": 144,
+              "expected_violations": 51.54,
+              "observed_violations": 58,
+              "oracle_optimal_expected": 142.06
+            },
+            "20pct": {
+              "tests": 288,
+              "expected_violations": 115.94,
+              "observed_violations": 115,
+              "oracle_optimal_expected": 270.34
+            },
+            "50pct": {
+              "tests": 720,
+              "expected_violations": 322.8,
+              "observed_violations": 305,
+              "oracle_optimal_expected": 549.84
+            }
+          }
+        }
+      },
+      "by_family": {
+        "GNN v0.8 operand-aware": {
+          "editor_autosave": {
+            "count": 240,
+            "mae": 0.049768,
+            "mean_oracle_risk": 0.439867,
+            "expected_failures_top10pct": 20.6843
+          },
+          "package_upgrade": {
+            "count": 240,
+            "mae": 0.197386,
+            "mean_oracle_risk": 0.758413,
+            "expected_failures_top10pct": 23.796992
+          },
+          "mirrored_alias_rotation": {
+            "count": 240,
+            "mae": 0.232948,
+            "mean_oracle_risk": 0.39261,
+            "expected_failures_top10pct": 14.045
+          },
+          "manifest_publication": {
+            "count": 240,
+            "mae": 0.02345,
+            "mean_oracle_risk": 0.345365,
+            "expected_failures_top10pct": 21.4399
+          },
+          "directory_migration": {
+            "count": 240,
+            "mae": 0.017744,
+            "mean_oracle_risk": 0.366149,
+            "expected_failures_top10pct": 20.47
+          },
+          "snapshot_batch": {
+            "count": 240,
+            "mae": 0.249467,
+            "mean_oracle_risk": 0.72063,
+            "expected_failures_top10pct": 23.259522
+          }
+        },
+        "Random Forest": {
+          "editor_autosave": {
+            "count": 240,
+            "mae": 0.176744,
+            "mean_oracle_risk": 0.439867,
+            "expected_failures_top10pct": 15.7804
+          },
+          "package_upgrade": {
+            "count": 240,
+            "mae": 0.292661,
+            "mean_oracle_risk": 0.758413,
+            "expected_failures_top10pct": 23.22737
+          },
+          "mirrored_alias_rotation": {
+            "count": 240,
+            "mae": 0.192948,
+            "mean_oracle_risk": 0.39261,
+            "expected_failures_top10pct": 12.5458
+          },
+          "manifest_publication": {
+            "count": 240,
+            "mae": 0.128304,
+            "mean_oracle_risk": 0.345365,
+            "expected_failures_top10pct": 20.9624
+          },
+          "directory_migration": {
+            "count": 240,
+            "mae": 0.106351,
+            "mean_oracle_risk": 0.366149,
+            "expected_failures_top10pct": 19.82
+          },
+          "snapshot_batch": {
+            "count": 240,
+            "mae": 0.336205,
+            "mean_oracle_risk": 0.72063,
+            "expected_failures_top10pct": 22.936111
+          }
+        },
+        "HistGradientBoosting": {
+          "editor_autosave": {
+            "count": 240,
+            "mae": 0.164537,
+            "mean_oracle_risk": 0.439867,
+            "expected_failures_top10pct": 14.4904
+          },
+          "package_upgrade": {
+            "count": 240,
+            "mae": 0.254961,
+            "mean_oracle_risk": 0.758413,
+            "expected_failures_top10pct": 23.783452
+          },
+          "mirrored_alias_rotation": {
+            "count": 240,
+            "mae": 0.168362,
+            "mean_oracle_risk": 0.39261,
+            "expected_failures_top10pct": 10.177
+          },
+          "manifest_publication": {
+            "count": 240,
+            "mae": 0.155194,
+            "mean_oracle_risk": 0.345365,
+            "expected_failures_top10pct": 20.5249
+          },
+          "directory_migration": {
+            "count": 240,
+            "mae": 0.156784,
+            "mean_oracle_risk": 0.366149,
+            "expected_failures_top10pct": 12.03
+          },
+          "snapshot_batch": {
+            "count": 240,
+            "mae": 0.327203,
+            "mean_oracle_risk": 0.72063,
+            "expected_failures_top10pct": 22.945401
+          }
+        },
+        "XGBoost": {
+          "editor_autosave": {
+            "count": 240,
+            "mae": 0.160156,
+            "mean_oracle_risk": 0.439867,
+            "expected_failures_top10pct": 15.1442
+          },
+          "package_upgrade": {
+            "count": 240,
+            "mae": 0.252121,
+            "mean_oracle_risk": 0.758413,
+            "expected_failures_top10pct": 23.854812
+          },
+          "mirrored_alias_rotation": {
+            "count": 240,
+            "mae": 0.156273,
+            "mean_oracle_risk": 0.39261,
+            "expected_failures_top10pct": 15.2936
+          },
+          "manifest_publication": {
+            "count": 240,
+            "mae": 0.147104,
+            "mean_oracle_risk": 0.345365,
+            "expected_failures_top10pct": 20.3999
+          },
+          "directory_migration": {
+            "count": 240,
+            "mae": 0.151001,
+            "mean_oracle_risk": 0.366149,
+            "expected_failures_top10pct": 15.03
+          },
+          "snapshot_batch": {
+            "count": 240,
+            "mae": 0.305104,
+            "mean_oracle_risk": 0.72063,
+            "expected_failures_top10pct": 23.643097
+          }
+        },
+        "Ridge (graph statistics)": {
+          "editor_autosave": {
+            "count": 240,
+            "mae": 0.237651,
+            "mean_oracle_risk": 0.439867,
+            "expected_failures_top10pct": 13.7295
+          },
+          "package_upgrade": {
+            "count": 240,
+            "mae": 0.190203,
+            "mean_oracle_risk": 0.758413,
+            "expected_failures_top10pct": 22.352875
+          },
+          "mirrored_alias_rotation": {
+            "count": 240,
+            "mae": 0.558194,
+            "mean_oracle_risk": 0.39261,
+            "expected_failures_top10pct": 11.8112
+          },
+          "manifest_publication": {
+            "count": 240,
+            "mae": 0.194176,
+            "mean_oracle_risk": 0.345365,
+            "expected_failures_top10pct": 15.8706
+          },
+          "directory_migration": {
+            "count": 240,
+            "mae": 0.209208,
+            "mean_oracle_risk": 0.366149,
+            "expected_failures_top10pct": 16.5062
+          },
+          "snapshot_batch": {
+            "count": 240,
+            "mae": 0.638993,
+            "mean_oracle_risk": 0.72063,
+            "expected_failures_top10pct": 14.359275
+          }
+        },
+        "Pending-writeback heuristic": {
+          "editor_autosave": {
+            "count": 240,
+            "mae": 0.449951,
+            "mean_oracle_risk": 0.439867,
+            "expected_failures_top10pct": 7.02375
+          },
+          "package_upgrade": {
+            "count": 240,
+            "mae": 0.299607,
+            "mean_oracle_risk": 0.758413,
+            "expected_failures_top10pct": 12.661801
+          },
+          "mirrored_alias_rotation": {
+            "count": 240,
+            "mae": 0.49709,
+            "mean_oracle_risk": 0.39261,
+            "expected_failures_top10pct": 4.935
+          },
+          "manifest_publication": {
+            "count": 240,
+            "mae": 0.529096,
+            "mean_oracle_risk": 0.345365,
+            "expected_failures_top10pct": 4.8825
+          },
+          "directory_migration": {
+            "count": 240,
+            "mae": 0.486882,
+            "mean_oracle_risk": 0.366149,
+            "expected_failures_top10pct": 4.905
+          },
+          "snapshot_batch": {
+            "count": 240,
+            "mae": 0.316024,
+            "mean_oracle_risk": 0.72063,
+            "expected_failures_top10pct": 12.280653
+          }
+        }
+      }
+    }
+  ],
+  "summary": {
+    "models": {
+      "GNN v0.8 operand-aware": {
+        "mae_to_oracle": {
+          "n": 5,
+          "mean": 0.123672,
+          "std_across_seeds": 0.014954,
+          "min": 0.10355,
+          "max": 0.13856,
+          "values": [
+            0.13856,
+            0.10355,
+            0.11283,
+            0.13496,
+            0.12846
+          ]
+        },
+        "rank_spearman": {
+          "n": 5,
+          "mean": 0.868172,
+          "std_across_seeds": 0.038936,
+          "min": 0.82274,
+          "max": 0.91377,
+          "values": [
+            0.84044,
+            0.9016,
+            0.91377,
+            0.82274,
+            0.86231
+          ]
+        },
+        "expected_failures_top10pct": {
+          "n": 5,
+          "mean": 133.24,
+          "std_across_seeds": 2.563718,
+          "min": 129.65,
+          "max": 136.38,
+          "values": [
+            129.65,
+            134.08,
+            136.38,
+            131.87,
+            134.22
+          ]
+        }
+      },
+      "Random Forest": {
+        "mae_to_oracle": {
+          "n": 5,
+          "mean": 0.208662,
+          "std_across_seeds": 0.009982,
+          "min": 0.19694,
+          "max": 0.2245,
+          "values": [
+            0.19694,
+            0.2245,
+            0.20832,
+            0.20801,
+            0.20554
+          ]
+        },
+        "rank_spearman": {
+          "n": 5,
+          "mean": 0.583106,
+          "std_across_seeds": 0.027758,
+          "min": 0.53972,
+          "max": 0.61727,
+          "values": [
+            0.58481,
+            0.53972,
+            0.5877,
+            0.58603,
+            0.61727
+          ]
+        },
+        "expected_failures_top10pct": {
+          "n": 5,
+          "mean": 114.898,
+          "std_across_seeds": 4.561203,
+          "min": 108.15,
+          "max": 119.93,
+          "values": [
+            113.11,
+            108.15,
+            117.88,
+            115.42,
+            119.93
+          ]
+        }
+      },
+      "HistGradientBoosting": {
+        "mae_to_oracle": {
+          "n": 5,
+          "mean": 0.20449,
+          "std_across_seeds": 0.003237,
+          "min": 0.19954,
+          "max": 0.20788,
+          "values": [
+            0.20372,
+            0.2068,
+            0.19954,
+            0.20788,
+            0.20451
+          ]
+        },
+        "rank_spearman": {
+          "n": 5,
+          "mean": 0.545868,
+          "std_across_seeds": 0.020299,
+          "min": 0.52502,
+          "max": 0.57561,
+          "values": [
+            0.54038,
+            0.55627,
+            0.57561,
+            0.52502,
+            0.53206
+          ]
+        },
+        "expected_failures_top10pct": {
+          "n": 5,
+          "mean": 111.226,
+          "std_across_seeds": 5.237531,
+          "min": 105.66,
+          "max": 116.49,
+          "values": [
+            116.49,
+            105.66,
+            115.68,
+            112.51,
+            105.79
+          ]
+        }
+      },
+      "XGBoost": {
+        "mae_to_oracle": {
+          "n": 5,
+          "mean": 0.20163,
+          "std_across_seeds": 0.010511,
+          "min": 0.1873,
+          "max": 0.2121,
+          "values": [
+            0.2109,
+            0.20256,
+            0.1873,
+            0.2121,
+            0.19529
+          ]
+        },
+        "rank_spearman": {
+          "n": 5,
+          "mean": 0.528912,
+          "std_across_seeds": 0.052881,
+          "min": 0.475,
+          "max": 0.60118,
+          "values": [
+            0.48028,
+            0.53326,
+            0.60118,
+            0.475,
+            0.55484
+          ]
+        },
+        "expected_failures_top10pct": {
+          "n": 5,
+          "mean": 111.516,
+          "std_across_seeds": 6.028423,
+          "min": 105.86,
+          "max": 118.8,
+          "values": [
+            108.66,
+            107.06,
+            118.8,
+            105.86,
+            117.2
+          ]
+        }
+      },
+      "Ridge (graph statistics)": {
+        "mae_to_oracle": {
+          "n": 5,
+          "mean": 0.349128,
+          "std_across_seeds": 0.007232,
+          "min": 0.33807,
+          "max": 0.35806,
+          "values": [
+            0.35036,
+            0.35119,
+            0.35806,
+            0.34796,
+            0.33807
+          ]
+        },
+        "rank_spearman": {
+          "n": 5,
+          "mean": 0.0315,
+          "std_across_seeds": 0.027323,
+          "min": 0.0046,
+          "max": 0.06455,
+          "values": [
+            0.02941,
+            0.05353,
+            0.0046,
+            0.00541,
+            0.06455
+          ]
+        },
+        "expected_failures_top10pct": {
+          "n": 5,
+          "mean": 69.168,
+          "std_across_seeds": 1.383174,
+          "min": 67.96,
+          "max": 70.73,
+          "values": [
+            68.35,
+            70.62,
+            68.18,
+            70.73,
+            67.96
+          ]
+        }
+      },
+      "Pending-writeback heuristic": {
+        "mae_to_oracle": {
+          "n": 5,
+          "mean": 0.42977,
+          "std_across_seeds": 0.0,
+          "min": 0.42977,
+          "max": 0.42977,
+          "values": [
+            0.42977,
+            0.42977,
+            0.42977,
+            0.42977,
+            0.42977
+          ]
+        },
+        "rank_spearman": {
+          "n": 5,
+          "mean": -0.17113,
+          "std_across_seeds": 0.0,
+          "min": -0.17113,
+          "max": -0.17113,
+          "values": [
+            -0.17113,
+            -0.17113,
+            -0.17113,
+            -0.17113,
+            -0.17113
+          ]
+        },
+        "expected_failures_top10pct": {
+          "n": 5,
+          "mean": 51.54,
+          "std_across_seeds": 0.0,
+          "min": 51.54,
+          "max": 51.54,
+          "values": [
+            51.54,
+            51.54,
+            51.54,
+            51.54,
+            51.54
+          ]
+        }
+      }
+    },
+    "paired_vs_gnn": {
+      "Random Forest": {
+        "mae_advantage_of_gnn": {
+          "n": 5,
+          "mean": 0.08499,
+          "std_across_seeds": 0.024066,
+          "min": 0.05838,
+          "max": 0.12095,
+          "values": [
+            0.05838,
+            0.12095,
+            0.09549,
+            0.07305,
+            0.07708
+          ]
+        },
+        "ranking_advantage_of_gnn": {
+          "n": 5,
+          "mean": 18.342,
+          "std_across_seeds": 4.495784,
+          "min": 14.29,
+          "max": 25.93,
+          "values": [
+            16.54,
+            25.93,
+            18.5,
+            16.45,
+            14.29
+          ]
+        }
+      },
+      "HistGradientBoosting": {
+        "mae_advantage_of_gnn": {
+          "n": 5,
+          "mean": 0.080818,
+          "std_across_seeds": 0.014733,
+          "min": 0.06516,
+          "max": 0.10325,
+          "values": [
+            0.06516,
+            0.10325,
+            0.08671,
+            0.07292,
+            0.07605
+          ]
+        },
+        "ranking_advantage_of_gnn": {
+          "n": 5,
+          "mean": 22.014,
+          "std_across_seeds": 6.507025,
+          "min": 13.16,
+          "max": 28.43,
+          "values": [
+            13.16,
+            28.42,
+            20.7,
+            19.36,
+            28.43
+          ]
+        }
+      },
+      "XGBoost": {
+        "mae_advantage_of_gnn": {
+          "n": 5,
+          "mean": 0.077958,
+          "std_across_seeds": 0.012363,
+          "min": 0.06683,
+          "max": 0.09901,
+          "values": [
+            0.07234,
+            0.09901,
+            0.07447,
+            0.07714,
+            0.06683
+          ]
+        },
+        "ranking_advantage_of_gnn": {
+          "n": 5,
+          "mean": 21.724,
+          "std_across_seeds": 4.643719,
+          "min": 17.02,
+          "max": 27.02,
+          "values": [
+            20.99,
+            27.02,
+            17.58,
+            26.01,
+            17.02
+          ]
+        }
+      },
+      "Ridge (graph statistics)": {
+        "mae_advantage_of_gnn": {
+          "n": 5,
+          "mean": 0.225456,
+          "std_across_seeds": 0.019209,
+          "min": 0.20961,
+          "max": 0.24764,
+          "values": [
+            0.2118,
+            0.24764,
+            0.24523,
+            0.213,
+            0.20961
+          ]
+        },
+        "ranking_advantage_of_gnn": {
+          "n": 5,
+          "mean": 64.072,
+          "std_across_seeds": 3.101729,
+          "min": 61.14,
+          "max": 68.2,
+          "values": [
+            61.3,
+            63.46,
+            68.2,
+            61.14,
+            66.26
+          ]
+        }
+      },
+      "Pending-writeback heuristic": {
+        "mae_advantage_of_gnn": {
+          "n": 5,
+          "mean": 0.306098,
+          "std_across_seeds": 0.014954,
+          "min": 0.29121,
+          "max": 0.32622,
+          "values": [
+            0.29121,
+            0.32622,
+            0.31694,
+            0.29481,
+            0.30131
+          ]
+        },
+        "ranking_advantage_of_gnn": {
+          "n": 5,
+          "mean": 81.7,
+          "std_across_seeds": 2.563718,
+          "min": 78.11,
+          "max": 84.84,
+          "values": [
+            78.11,
+            82.54,
+            84.84,
+            80.33,
+            82.68
+          ]
+        }
+      }
+    }
+  },
+  "limitations": [
+    "Every example uses the same in-memory, independent per-object writeback simulator; no ext4 execution.",
+    "Families are independently designed templates, not independent production workload traces.",
+    "External cohort is shared across seeds for paired comparisons; seeds vary training generation and initialization.",
+    "Five seeds are not sufficient alone to infer universal performance on real operating systems.",
+    "Original v0.8 architecture was developed after looking at older held-out families.",
+    "Attention coefficients are graph message weights, not causal attributions."
+  ],
+  "created_at": "2026-11-16T14:15:10.274881+00:00"
+}

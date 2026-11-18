@@ -1,0 +1,158 @@
+{
+  "name": "VFSim Hard-Mode FaultLab",
+  "samples": 5000,
+  "seed": 47,
+  "epochs": 5,
+  "model_variant": "operand",
+  "split": {
+    "train": 2700,
+    "validation": 528,
+    "in_distribution_test": 522,
+    "heldout_family_test": 1250
+  },
+  "families": [
+    "atomic_pair",
+    "write_ahead_log",
+    "staged_replace",
+    "hardlink_release",
+    "directory_publish",
+    "garbage_collect",
+    "hardlink_retarget",
+    "sharded_commit"
+  ],
+  "heldout_families": [
+    "hardlink_retarget",
+    "sharded_commit"
+  ],
+  "oracle_summary": {
+    "count": 5000,
+    "families": {
+      "directory_publish": 625,
+      "hardlink_release": 625,
+      "write_ahead_log": 625,
+      "garbage_collect": 625,
+      "staged_replace": 625,
+      "atomic_pair": 625,
+      "hardlink_retarget": 625,
+      "sharded_commit": 625
+    },
+    "zero_risk": 1228,
+    "certain_failure": 0,
+    "intermediate_risk": 3772,
+    "average_failure_probability": 0.32964
+  },
+  "method": "Exhaustive application-invariant recovery oracle over independent per-object writeback masks",
+  "prediction_boundary": "Workload, stable/current objects and writeback probability known; realized persistence mask and recovered state hidden",
+  "limitations": "Synthetic independent object/dir writeback; no ext4 VM or Linux block tracing; no measured real filesystem vulnerabilities",
+  "history": [
+    {
+      "epoch": 1,
+      "train_mse": 0.05425,
+      "validation_mae": 0.17003,
+      "validation_spearman": 0.65696
+    },
+    {
+      "epoch": 2,
+      "train_mse": 0.01722,
+      "validation_mae": 0.0574,
+      "validation_spearman": 0.95079
+    },
+    {
+      "epoch": 3,
+      "train_mse": 0.00504,
+      "validation_mae": 0.02124,
+      "validation_spearman": 0.98019
+    },
+    {
+      "epoch": 4,
+      "train_mse": 0.00349,
+      "validation_mae": 0.02094,
+      "validation_spearman": 0.98364
+    },
+    {
+      "epoch": 5,
+      "train_mse": 0.00268,
+      "validation_mae": 0.01907,
+      "validation_spearman": 0.98532
+    }
+  ],
+  "results": {
+    "GNN": {
+      "in_distribution": {
+        "count": 522,
+        "mean_oracle_risk": 0.2675,
+        "mae_to_oracle": 0.01756,
+        "rmse_to_oracle": 0.02633,
+        "brier_to_sampled_outcome": 0.13561,
+        "spearman_risk_rank": 0.98169,
+        "realized_violations": 151,
+        "sampled_roc_auc": 0.85291,
+        "sampled_average_precision": 0.7188,
+        "prioritization": {
+          "5pct": {
+            "tests": 26,
+            "expected_violations": 23.15,
+            "observed_violations": 24,
+            "oracle_optimal_expected": 23.15
+          },
+          "10pct": {
+            "tests": 52,
+            "expected_violations": 42.87,
+            "observed_violations": 44,
+            "oracle_optimal_expected": 42.87
+          },
+          "20pct": {
+            "tests": 104,
+            "expected_violations": 71.79,
+            "observed_violations": 74,
+            "oracle_optimal_expected": 71.91
+          },
+          "50pct": {
+            "tests": 261,
+            "expected_violations": 122.55,
+            "observed_violations": 126,
+            "oracle_optimal_expected": 122.89
+          }
+        }
+      },
+      "heldout_families": {
+        "count": 1250,
+        "mean_oracle_risk": 0.45942,
+        "mae_to_oracle": 0.13521,
+        "rmse_to_oracle": 0.18382,
+        "brier_to_sampled_outcome": 0.16024,
+        "spearman_risk_rank": 0.91957,
+        "realized_violations": 567,
+        "sampled_roc_auc": 0.87267,
+        "sampled_average_precision": 0.83409,
+        "prioritization": {
+          "5pct": {
+            "tests": 62,
+            "expected_violations": 60.29,
+            "observed_violations": 57,
+            "oracle_optimal_expected": 61.64
+          },
+          "10pct": {
+            "tests": 125,
+            "expected_violations": 118.57,
+            "observed_violations": 118,
+            "oracle_optimal_expected": 122.45
+          },
+          "20pct": {
+            "tests": 250,
+            "expected_violations": 221.18,
+            "observed_violations": 218,
+            "oracle_optimal_expected": 233.57
+          },
+          "50pct": {
+            "tests": 625,
+            "expected_violations": 475.19,
+            "observed_violations": 468,
+            "oracle_optimal_expected": 482.81
+          }
+        }
+      }
+    }
+  },
+  "created_at": "2026-11-16T14:12:13.241680+00:00"
+}

@@ -1,0 +1,19 @@
+{
+  "frontend": "Source-built TanStack React application",
+  "app_url": "http://127.0.0.1:8000",
+  "api_url": "http://127.0.0.1:8000",
+  "captured_at": "2026-11-18T19:13:54.241375+00:00",
+  "javascript_exceptions": [],
+  "screenshots": [
+    "01_overview.png",
+    "02_graph_explorer.png",
+    "03_transactions.png",
+    "04_risk_analysis.png",
+    "05_crash_lab.png",
+    "06_gnn_model.png",
+    "07_settings.png",
+    "08_gnn_selected_node.png",
+    "09_graph_gnn_mode.png"
+  ],
+  "exercised_live_operations": true
+}

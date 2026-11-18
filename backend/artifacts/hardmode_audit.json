@@ -1,0 +1,265 @@
+{
+  "provenance": "Same checkpoint and dataset as v0.7, no refitting of the GNN on OOD",
+  "sample_count": 5000,
+  "dataset_seed": 42,
+  "model_variant": "operand",
+  "train_count": 2700,
+  "heldout_count": 1250,
+  "heldout_families": [
+    "hardlink_retarget",
+    "sharded_commit"
+  ],
+  "model_comparison": {
+    "GNN": {
+      "mae": 0.13143,
+      "expected_violations_top10pct": 111.82
+    },
+    "Random Forest": {
+      "mae": 0.23193,
+      "expected_violations_top10pct": 113.44
+    },
+    "HistGradientBoosting": {
+      "mae": 0.23579,
+      "expected_violations_top10pct": 114.76
+    },
+    "XGBoost": {
+      "mae": 0.24046,
+      "expected_violations_top10pct": 113.58
+    }
+  },
+  "per_family": {
+    "hardlink_retarget": {
+      "count": 625,
+      "mean_risk": 0.19942,
+      "models": {
+        "GNN": {
+          "mae": 0.01433,
+          "expected_violations_top10pct": 49.39
+        },
+        "Random Forest": {
+          "mae": 0.15466,
+          "expected_violations_top10pct": 36.17
+        },
+        "HistGradientBoosting": {
+          "mae": 0.14203,
+          "expected_violations_top10pct": 36.5
+        },
+        "XGBoost": {
+          "mae": 0.15439,
+          "expected_violations_top10pct": 43.49
+        }
+      }
+    },
+    "sharded_commit": {
+      "count": 625,
+      "mean_risk": 0.71038,
+      "models": {
+        "GNN": {
+          "mae": 0.24853,
+          "expected_violations_top10pct": 59.68
+        },
+        "Random Forest": {
+          "mae": 0.3092,
+          "expected_violations_top10pct": 58.31
+        },
+        "HistGradientBoosting": {
+          "mae": 0.32955,
+          "expected_violations_top10pct": 59.29
+        },
+        "XGBoost": {
+          "mae": 0.32654,
+          "expected_violations_top10pct": 59.12
+        }
+      }
+    }
+  },
+  "gnn_worst_cases": [
+    {
+      "id": "faultlab-02351",
+      "family": "sharded_commit",
+      "seed": 1345840745,
+      "writeback_probability": 0.55,
+      "oracle_risk": 0.90849,
+      "gnn_prediction": 0.43014,
+      "absolute_error": 0.47836
+    },
+    {
+      "id": "faultlab-04791",
+      "family": "sharded_commit",
+      "seed": 3223596641,
+      "writeback_probability": 0.55,
+      "oracle_risk": 0.90849,
+      "gnn_prediction": 0.43375,
+      "absolute_error": 0.47474
+    },
+    {
+      "id": "faultlab-00599",
+      "family": "sharded_commit",
+      "seed": 1785081806,
+      "writeback_probability": 0.55,
+      "oracle_risk": 0.90849,
+      "gnn_prediction": 0.43394,
+      "absolute_error": 0.47456
+    },
+    {
+      "id": "faultlab-01799",
+      "family": "sharded_commit",
+      "seed": 469509900,
+      "writeback_probability": 0.55,
+      "oracle_risk": 0.90849,
+      "gnn_prediction": 0.43591,
+      "absolute_error": 0.47259
+    },
+    {
+      "id": "faultlab-00351",
+      "family": "sharded_commit",
+      "seed": 159824875,
+      "writeback_probability": 0.55,
+      "oracle_risk": 0.90849,
+      "gnn_prediction": 0.43626,
+      "absolute_error": 0.47223
+    },
+    {
+      "id": "faultlab-04383",
+      "family": "sharded_commit",
+      "seed": 3177901142,
+      "writeback_probability": 0.55,
+      "oracle_risk": 0.90849,
+      "gnn_prediction": 0.43723,
+      "absolute_error": 0.47126
+    },
+    {
+      "id": "faultlab-03615",
+      "family": "sharded_commit",
+      "seed": 2080288209,
+      "writeback_probability": 0.4,
+      "oracle_risk": 0.9744,
+      "gnn_prediction": 0.50842,
+      "absolute_error": 0.46598
+    },
+    {
+      "id": "faultlab-02719",
+      "family": "sharded_commit",
+      "seed": 4016055566,
+      "writeback_probability": 0.4,
+      "oracle_risk": 0.9744,
+      "gnn_prediction": 0.51043,
+      "absolute_error": 0.46397
+    },
+    {
+      "id": "faultlab-01551",
+      "family": "sharded_commit",
+      "seed": 2225674121,
+      "writeback_probability": 0.4,
+      "oracle_risk": 0.9744,
+      "gnn_prediction": 0.51115,
+      "absolute_error": 0.46325
+    },
+    {
+      "id": "faultlab-02831",
+      "family": "sharded_commit",
+      "seed": 968474938,
+      "writeback_probability": 0.55,
+      "oracle_risk": 0.90849,
+      "gnn_prediction": 0.45822,
+      "absolute_error": 0.45027
+    },
+    {
+      "id": "faultlab-01271",
+      "family": "sharded_commit",
+      "seed": 1271405590,
+      "writeback_probability": 0.55,
+      "oracle_risk": 0.90849,
+      "gnn_prediction": 0.45849,
+      "absolute_error": 0.45001
+    },
+    {
+      "id": "faultlab-02999",
+      "family": "sharded_commit",
+      "seed": 1008372962,
+      "writeback_probability": 0.55,
+      "oracle_risk": 0.93122,
+      "gnn_prediction": 0.48174,
+      "absolute_error": 0.44948
+    }
+  ],
+  "calibration_bins": [
+    {
+      "predicted_range": [
+        0.0,
+        0.2
+      ],
+      "count": 461,
+      "mean_prediction": 0.0751,
+      "mean_oracle_probability": 0.1006,
+      "absolute_calibration_gap": 0.0255
+    },
+    {
+      "predicted_range": [
+        0.2,
+        0.4
+      ],
+      "count": 304,
+      "mean_prediction": 0.2778,
+      "mean_oracle_probability": 0.396,
+      "absolute_calibration_gap": 0.1181
+    },
+    {
+      "predicted_range": [
+        0.4,
+        0.6
+      ],
+      "count": 241,
+      "mean_prediction": 0.4804,
+      "mean_oracle_probability": 0.7843,
+      "absolute_calibration_gap": 0.3039
+    },
+    {
+      "predicted_range": [
+        0.6,
+        0.8
+      ],
+      "count": 118,
+      "mean_prediction": 0.6916,
+      "mean_oracle_probability": 0.8485,
+      "absolute_calibration_gap": 0.1569
+    },
+    {
+      "predicted_range": [
+        0.8,
+        1.0
+      ],
+      "count": 126,
+      "mean_prediction": 0.855,
+      "mean_oracle_probability": 0.8949,
+      "absolute_calibration_gap": 0.0399
+    }
+  ],
+  "paired_bootstrap": {
+    "Random Forest": {
+      "improvement_mae": 0.1005,
+      "paired_bootstrap_95pct": [
+        0.09305,
+        0.10875
+      ],
+      "improvement_sign": "positive means GNN lower MAE"
+    },
+    "HistGradientBoosting": {
+      "improvement_mae": 0.10436,
+      "paired_bootstrap_95pct": [
+        0.09793,
+        0.11163
+      ],
+      "improvement_sign": "positive means GNN lower MAE"
+    },
+    "XGBoost": {
+      "improvement_mae": 0.10903,
+      "paired_bootstrap_95pct": [
+        0.10286,
+        0.11575
+      ],
+      "improvement_sign": "positive means GNN lower MAE"
+    }
+  },
+  "limitations": "Bootstraps resample examples from the same generator and single checkpoint. Not independent training-seed confidence bounds and not evidence on real filesystems. The held-out test set was inspected for diagnostics, not used to retrain the reported checkpoint."
+}

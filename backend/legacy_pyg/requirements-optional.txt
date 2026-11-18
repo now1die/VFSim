@@ -1,0 +1,2 @@
+# Install separately in a compatible Python/PyTorch environment.
+torch-geometric

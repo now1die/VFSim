@@ -1,0 +1,42 @@
+{
+  "model_selection_warning": "Exploratory v0.8 comparison was examined on the same held-out seed-42 cases as v0.7; do not claim an unbiased architecture-search win.",
+  "samples": 5000,
+  "heldout_count": 1250,
+  "seeds": {
+    "dataset": 42,
+    "bootstrap": 2027
+  },
+  "v07_global": {
+    "heldout_mae": 0.15199,
+    "expected_violations_at_10pct": 113.82
+  },
+  "v08_operand": {
+    "heldout_mae": 0.13143,
+    "expected_violations_at_10pct": 111.82
+  },
+  "v08_minus_v07": {
+    "mae_reduction": 0.02056,
+    "mae_reduction_95pct_stratified_bootstrap": [
+      0.01773,
+      0.0236
+    ],
+    "expected_violations_top10_delta": -1.999,
+    "top10_delta_95pct_stratified_bootstrap": [
+      -5.13,
+      1.33
+    ]
+  },
+  "per_family": {
+    "hardlink_retarget": {
+      "count": 625,
+      "v07_mae": 0.04107,
+      "v08_mae": 0.01433
+    },
+    "sharded_commit": {
+      "count": 625,
+      "v07_mae": 0.26291,
+      "v08_mae": 0.24853
+    }
+  },
+  "limitations": "All tests use an application-level synthetic oracle and one dataset seed. Repeated model training seeds, unseen generators and real filesystem studies are not covered."
+}

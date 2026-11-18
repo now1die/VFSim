@@ -1,0 +1,50 @@
+== Training seed 11 ==
+Oracle summary {'count': 5000, 'families': {'directory_publish': 625, 'garbage_collect': 625, 'hardlink_retarget': 625, 'sharded_commit': 625, 'write_ahead_log': 625, 'atomic_pair': 625, 'staged_replace': 625, 'hardlink_release': 625}, 'zero_risk': 1254, 'certain_failure': 0, 'intermediate_risk': 3746, 'average_failure_probability': 0.32801} splits [2700, 528, 522, 1250]
+Epoch 1 train MSE 0.0462 validation MAE 0.1409 ranking rho 0.780
+Epoch 2 train MSE 0.0117 validation MAE 0.0311 ranking rho 0.978
+Epoch 3 train MSE 0.0051 validation MAE 0.0270 ranking rho 0.978
+Epoch 4 train MSE 0.0037 validation MAE 0.0206 ranking rho 0.983
+Epoch 5 train MSE 0.0035 validation MAE 0.0184 ranking rho 0.986
+Saved artifacts/independent_v09/seed_11/crash_risk_hardmode.pt
+GNN ID 0.01859 OOD 0.13276 OOD expected @10% 114.59
+Finished seed=11: GNN MAE=0.13856, HistGB MAE=0.20372, GNN top10=129.65
+== Training seed 29 ==
+Oracle summary {'count': 5000, 'families': {'atomic_pair': 625, 'directory_publish': 625, 'write_ahead_log': 625, 'staged_replace': 625, 'hardlink_release': 625, 'sharded_commit': 625, 'hardlink_retarget': 625, 'garbage_collect': 625}, 'zero_risk': 1216, 'certain_failure': 0, 'intermediate_risk': 3784, 'average_failure_probability': 0.33256} splits [2700, 528, 522, 1250]
+Epoch 1 train MSE 0.0501 validation MAE 0.1142 ranking rho 0.824
+Epoch 2 train MSE 0.0208 validation MAE 0.0617 ranking rho 0.898
+Epoch 3 train MSE 0.0063 validation MAE 0.0223 ranking rho 0.983
+Epoch 4 train MSE 0.0058 validation MAE 0.0237 ranking rho 0.984
+Epoch 5 train MSE 0.0025 validation MAE 0.0306 ranking rho 0.978
+Saved artifacts/independent_v09/seed_29/crash_risk_hardmode.pt
+GNN ID 0.02151 OOD 0.11203 OOD expected @10% 118.63
+Finished seed=29: GNN MAE=0.10355, HistGB MAE=0.2068, GNN top10=134.08
+== Training seed 47 ==
+Oracle summary {'count': 5000, 'families': {'directory_publish': 625, 'hardlink_release': 625, 'write_ahead_log': 625, 'garbage_collect': 625, 'staged_replace': 625, 'atomic_pair': 625, 'hardlink_retarget': 625, 'sharded_commit': 625}, 'zero_risk': 1228, 'certain_failure': 0, 'intermediate_risk': 3772, 'average_failure_probability': 0.32964} splits [2700, 528, 522, 1250]
+Epoch 1 train MSE 0.0543 validation MAE 0.1700 ranking rho 0.657
+Epoch 2 train MSE 0.0172 validation MAE 0.0574 ranking rho 0.951
+Epoch 3 train MSE 0.0050 validation MAE 0.0212 ranking rho 0.980
+Epoch 4 train MSE 0.0035 validation MAE 0.0209 ranking rho 0.984
+Epoch 5 train MSE 0.0027 validation MAE 0.0191 ranking rho 0.985
+Saved artifacts/independent_v09/seed_47/crash_risk_hardmode.pt
+GNN ID 0.01756 OOD 0.13521 OOD expected @10% 118.57
+Finished seed=47: GNN MAE=0.11283, HistGB MAE=0.19954, GNN top10=136.38
+== Training seed 83 ==
+Oracle summary {'count': 5000, 'families': {'write_ahead_log': 625, 'sharded_commit': 625, 'staged_replace': 625, 'hardlink_release': 625, 'hardlink_retarget': 625, 'garbage_collect': 625, 'atomic_pair': 625, 'directory_publish': 625}, 'zero_risk': 1248, 'certain_failure': 0, 'intermediate_risk': 3752, 'average_failure_probability': 0.32477} splits [2700, 528, 522, 1250]
+Epoch 1 train MSE 0.0518 validation MAE 0.1203 ranking rho 0.752
+Epoch 2 train MSE 0.0227 validation MAE 0.0651 ranking rho 0.892
+Epoch 3 train MSE 0.0078 validation MAE 0.0334 ranking rho 0.976
+Epoch 4 train MSE 0.0043 validation MAE 0.0484 ranking rho 0.948
+Epoch 5 train MSE 0.0029 validation MAE 0.0223 ranking rho 0.986
+Saved artifacts/independent_v09/seed_83/crash_risk_hardmode.pt
+GNN ID 0.02254 OOD 0.14416 OOD expected @10% 111.91
+Finished seed=83: GNN MAE=0.13496, HistGB MAE=0.20788, GNN top10=131.87
+== Training seed 131 ==
+Oracle summary {'count': 5000, 'families': {'staged_replace': 625, 'hardlink_retarget': 625, 'garbage_collect': 625, 'hardlink_release': 625, 'write_ahead_log': 625, 'directory_publish': 625, 'atomic_pair': 625, 'sharded_commit': 625}, 'zero_risk': 1273, 'certain_failure': 0, 'intermediate_risk': 3727, 'average_failure_probability': 0.32337} splits [2700, 528, 522, 1250]
+Epoch 1 train MSE 0.0454 validation MAE 0.1060 ranking rho 0.792
+Epoch 2 train MSE 0.0156 validation MAE 0.0462 ranking rho 0.941
+Epoch 3 train MSE 0.0046 validation MAE 0.0579 ranking rho 0.940
+Epoch 4 train MSE 0.0029 validation MAE 0.1315 ranking rho 0.667
+Epoch 5 train MSE 0.0034 validation MAE 0.0133 ranking rho 0.985
+Saved artifacts/independent_v09/seed_131/crash_risk_hardmode.pt
+GNN ID 0.01388 OOD 0.11805 OOD expected @10% 114.78
+Finished seed=131: GNN MAE=0.12846, HistGB MAE=0.20451, GNN top10=134.22

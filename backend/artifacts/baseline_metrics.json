@@ -1,0 +1,502 @@
+{
+  "Random Forest": {
+    "validation": {
+      "samples": 504,
+      "positive": 252,
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "roc_auc": 1.0,
+      "average_precision": 1.0,
+      "prioritization": {
+        "candidate_count": 504,
+        "positive_candidates": 252,
+        "tests_to_first_violation": 1,
+        "budgets": {
+          "5pct": {
+            "tests": 25,
+            "violations_found": 25,
+            "precision_at_budget": 1.0,
+            "recall_at_budget": 0.0992
+          },
+          "10pct": {
+            "tests": 50,
+            "violations_found": 50,
+            "precision_at_budget": 1.0,
+            "recall_at_budget": 0.1984
+          },
+          "20pct": {
+            "tests": 101,
+            "violations_found": 101,
+            "precision_at_budget": 1.0,
+            "recall_at_budget": 0.4008
+          },
+          "50pct": {
+            "tests": 252,
+            "violations_found": 252,
+            "precision_at_budget": 1.0,
+            "recall_at_budget": 1.0
+          }
+        }
+      }
+    },
+    "in_distribution": {
+      "samples": 496,
+      "positive": 248,
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "roc_auc": 1.0,
+      "average_precision": 1.0,
+      "prioritization": {
+        "candidate_count": 496,
+        "positive_candidates": 248,
+        "tests_to_first_violation": 1,
+        "budgets": {
+          "5pct": {
+            "tests": 25,
+            "violations_found": 25,
+            "precision_at_budget": 1.0,
+            "recall_at_budget": 0.1008
+          },
+          "10pct": {
+            "tests": 50,
+            "violations_found": 50,
+            "precision_at_budget": 1.0,
+            "recall_at_budget": 0.2016
+          },
+          "20pct": {
+            "tests": 99,
+            "violations_found": 99,
+            "precision_at_budget": 1.0,
+            "recall_at_budget": 0.3992
+          },
+          "50pct": {
+            "tests": 248,
+            "violations_found": 248,
+            "precision_at_budget": 1.0,
+            "recall_at_budget": 1.0
+          }
+        }
+      }
+    },
+    "heldout_families": {
+      "samples": 1000,
+      "positive": 500,
+      "accuracy": 0.867,
+      "precision": 0.7899,
+      "recall": 1.0,
+      "f1": 0.8826,
+      "roc_auc": 1.0,
+      "average_precision": 1.0,
+      "prioritization": {
+        "candidate_count": 1000,
+        "positive_candidates": 500,
+        "tests_to_first_violation": 1,
+        "budgets": {
+          "5pct": {
+            "tests": 50,
+            "violations_found": 50,
+            "precision_at_budget": 1.0,
+            "recall_at_budget": 0.1
+          },
+          "10pct": {
+            "tests": 100,
+            "violations_found": 100,
+            "precision_at_budget": 1.0,
+            "recall_at_budget": 0.2
+          },
+          "20pct": {
+            "tests": 200,
+            "violations_found": 200,
+            "precision_at_budget": 1.0,
+            "recall_at_budget": 0.4
+          },
+          "50pct": {
+            "tests": 500,
+            "violations_found": 500,
+            "precision_at_budget": 1.0,
+            "recall_at_budget": 1.0
+          }
+        }
+      }
+    }
+  },
+  "HistGradientBoosting": {
+    "validation": {
+      "samples": 504,
+      "positive": 252,
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "roc_auc": 1.0,
+      "average_precision": 1.0,
+      "prioritization": {
+        "candidate_count": 504,
+        "positive_candidates": 252,
+        "tests_to_first_violation": 1,
+        "budgets": {
+          "5pct": {
+            "tests": 25,
+            "violations_found": 25,
+            "precision_at_budget": 1.0,
+            "recall_at_budget": 0.0992
+          },
+          "10pct": {
+            "tests": 50,
+            "violations_found": 50,
+            "precision_at_budget": 1.0,
+            "recall_at_budget": 0.1984
+          },
+          "20pct": {
+            "tests": 101,
+            "violations_found": 101,
+            "precision_at_budget": 1.0,
+            "recall_at_budget": 0.4008
+          },
+          "50pct": {
+            "tests": 252,
+            "violations_found": 252,
+            "precision_at_budget": 1.0,
+            "recall_at_budget": 1.0
+          }
+        }
+      }
+    },
+    "in_distribution": {
+      "samples": 496,
+      "positive": 248,
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "roc_auc": 1.0,
+      "average_precision": 1.0,
+      "prioritization": {
+        "candidate_count": 496,
+        "positive_candidates": 248,
+        "tests_to_first_violation": 1,
+        "budgets": {
+          "5pct": {
+            "tests": 25,
+            "violations_found": 25,
+            "precision_at_budget": 1.0,
+            "recall_at_budget": 0.1008
+          },
+          "10pct": {
+            "tests": 50,
+            "violations_found": 50,
+            "precision_at_budget": 1.0,
+            "recall_at_budget": 0.2016
+          },
+          "20pct": {
+            "tests": 99,
+            "violations_found": 99,
+            "precision_at_budget": 1.0,
+            "recall_at_budget": 0.3992
+          },
+          "50pct": {
+            "tests": 248,
+            "violations_found": 248,
+            "precision_at_budget": 1.0,
+            "recall_at_budget": 1.0
+          }
+        }
+      }
+    },
+    "heldout_families": {
+      "samples": 1000,
+      "positive": 500,
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "roc_auc": 1.0,
+      "average_precision": 1.0,
+      "prioritization": {
+        "candidate_count": 1000,
+        "positive_candidates": 500,
+        "tests_to_first_violation": 1,
+        "budgets": {
+          "5pct": {
+            "tests": 50,
+            "violations_found": 50,
+            "precision_at_budget": 1.0,
+            "recall_at_budget": 0.1
+          },
+          "10pct": {
+            "tests": 100,
+            "violations_found": 100,
+            "precision_at_budget": 1.0,
+            "recall_at_budget": 0.2
+          },
+          "20pct": {
+            "tests": 200,
+            "violations_found": 200,
+            "precision_at_budget": 1.0,
+            "recall_at_budget": 0.4
+          },
+          "50pct": {
+            "tests": 500,
+            "violations_found": 500,
+            "precision_at_budget": 1.0,
+            "recall_at_budget": 1.0
+          }
+        }
+      }
+    }
+  },
+  "XGBoost": {
+    "validation": {
+      "samples": 504,
+      "positive": 252,
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "roc_auc": 1.0,
+      "average_precision": 1.0,
+      "prioritization": {
+        "candidate_count": 504,
+        "positive_candidates": 252,
+        "tests_to_first_violation": 1,
+        "budgets": {
+          "5pct": {
+            "tests": 25,
+            "violations_found": 25,
+            "precision_at_budget": 1.0,
+            "recall_at_budget": 0.0992
+          },
+          "10pct": {
+            "tests": 50,
+            "violations_found": 50,
+            "precision_at_budget": 1.0,
+            "recall_at_budget": 0.1984
+          },
+          "20pct": {
+            "tests": 101,
+            "violations_found": 101,
+            "precision_at_budget": 1.0,
+            "recall_at_budget": 0.4008
+          },
+          "50pct": {
+            "tests": 252,
+            "violations_found": 252,
+            "precision_at_budget": 1.0,
+            "recall_at_budget": 1.0
+          }
+        }
+      }
+    },
+    "in_distribution": {
+      "samples": 496,
+      "positive": 248,
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "roc_auc": 1.0,
+      "average_precision": 1.0,
+      "prioritization": {
+        "candidate_count": 496,
+        "positive_candidates": 248,
+        "tests_to_first_violation": 1,
+        "budgets": {
+          "5pct": {
+            "tests": 25,
+            "violations_found": 25,
+            "precision_at_budget": 1.0,
+            "recall_at_budget": 0.1008
+          },
+          "10pct": {
+            "tests": 50,
+            "violations_found": 50,
+            "precision_at_budget": 1.0,
+            "recall_at_budget": 0.2016
+          },
+          "20pct": {
+            "tests": 99,
+            "violations_found": 99,
+            "precision_at_budget": 1.0,
+            "recall_at_budget": 0.3992
+          },
+          "50pct": {
+            "tests": 248,
+            "violations_found": 248,
+            "precision_at_budget": 1.0,
+            "recall_at_budget": 1.0
+          }
+        }
+      }
+    },
+    "heldout_families": {
+      "samples": 1000,
+      "positive": 500,
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "roc_auc": 1.0,
+      "average_precision": 1.0,
+      "prioritization": {
+        "candidate_count": 1000,
+        "positive_candidates": 500,
+        "tests_to_first_violation": 1,
+        "budgets": {
+          "5pct": {
+            "tests": 50,
+            "violations_found": 50,
+            "precision_at_budget": 1.0,
+            "recall_at_budget": 0.1
+          },
+          "10pct": {
+            "tests": 100,
+            "violations_found": 100,
+            "precision_at_budget": 1.0,
+            "recall_at_budget": 0.2
+          },
+          "20pct": {
+            "tests": 200,
+            "violations_found": 200,
+            "precision_at_budget": 1.0,
+            "recall_at_budget": 0.4
+          },
+          "50pct": {
+            "tests": 500,
+            "violations_found": 500,
+            "precision_at_budget": 1.0,
+            "recall_at_budget": 1.0
+          }
+        }
+      }
+    }
+  },
+  "Any dirty inode": {
+    "validation": {
+      "samples": 504,
+      "positive": 252,
+      "accuracy": 0.5,
+      "precision": 0.5,
+      "recall": 1.0,
+      "f1": 0.6667,
+      "roc_auc": 0.5,
+      "average_precision": 0.5,
+      "prioritization": {
+        "candidate_count": 504,
+        "positive_candidates": 252,
+        "tests_to_first_violation": 1,
+        "budgets": {
+          "5pct": {
+            "tests": 25,
+            "violations_found": 13,
+            "precision_at_budget": 0.52,
+            "recall_at_budget": 0.0516
+          },
+          "10pct": {
+            "tests": 50,
+            "violations_found": 23,
+            "precision_at_budget": 0.46,
+            "recall_at_budget": 0.0913
+          },
+          "20pct": {
+            "tests": 101,
+            "violations_found": 50,
+            "precision_at_budget": 0.495,
+            "recall_at_budget": 0.1984
+          },
+          "50pct": {
+            "tests": 252,
+            "violations_found": 123,
+            "precision_at_budget": 0.4881,
+            "recall_at_budget": 0.4881
+          }
+        }
+      }
+    },
+    "in_distribution": {
+      "samples": 496,
+      "positive": 248,
+      "accuracy": 0.5,
+      "precision": 0.5,
+      "recall": 1.0,
+      "f1": 0.6667,
+      "roc_auc": 0.5,
+      "average_precision": 0.5,
+      "prioritization": {
+        "candidate_count": 496,
+        "positive_candidates": 248,
+        "tests_to_first_violation": 1,
+        "budgets": {
+          "5pct": {
+            "tests": 25,
+            "violations_found": 13,
+            "precision_at_budget": 0.52,
+            "recall_at_budget": 0.0524
+          },
+          "10pct": {
+            "tests": 50,
+            "violations_found": 27,
+            "precision_at_budget": 0.54,
+            "recall_at_budget": 0.1089
+          },
+          "20pct": {
+            "tests": 99,
+            "violations_found": 52,
+            "precision_at_budget": 0.5253,
+            "recall_at_budget": 0.2097
+          },
+          "50pct": {
+            "tests": 248,
+            "violations_found": 126,
+            "precision_at_budget": 0.5081,
+            "recall_at_budget": 0.5081
+          }
+        }
+      }
+    },
+    "heldout_families": {
+      "samples": 1000,
+      "positive": 500,
+      "accuracy": 0.5,
+      "precision": 0.5,
+      "recall": 1.0,
+      "f1": 0.6667,
+      "roc_auc": 0.5,
+      "average_precision": 0.5,
+      "prioritization": {
+        "candidate_count": 1000,
+        "positive_candidates": 500,
+        "tests_to_first_violation": 1,
+        "budgets": {
+          "5pct": {
+            "tests": 50,
+            "violations_found": 31,
+            "precision_at_budget": 0.62,
+            "recall_at_budget": 0.062
+          },
+          "10pct": {
+            "tests": 100,
+            "violations_found": 57,
+            "precision_at_budget": 0.57,
+            "recall_at_budget": 0.114
+          },
+          "20pct": {
+            "tests": 200,
+            "violations_found": 116,
+            "precision_at_budget": 0.58,
+            "recall_at_budget": 0.232
+          },
+          "50pct": {
+            "tests": 500,
+            "violations_found": 254,
+            "precision_at_budget": 0.508,
+            "recall_at_budget": 0.508
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "cohort_sha256": "1b738e13bba0236492b970f04120f09dc7790014ad52918e2ec4928d75fc8a27",
+  "generator_sha256": "8c1ad704af9b58c69cf930f720b4152678f1f643bec81b16b3e9977d779e80cd",
+  "cohort_seed": 20261116,
+  "workload_families": [
+    "editor_autosave",
+    "package_upgrade",
+    "mirrored_alias_rotation",
+    "manifest_publication",
+    "directory_migration",
+    "snapshot_batch"
+  ],
+  "cases_per_family": 240,
+  "summary": {
+    "count": 1440,
+    "families": {
+      "editor_autosave": 240,
+      "package_upgrade": 240,
+      "mirrored_alias_rotation": 240,
+      "manifest_publication": 240,
+      "directory_migration": 240,
+      "snapshot_batch": 240
+    },
+    "zero_risk": 157,
+    "certain_failure": 0,
+    "intermediate_risk": 1283,
+    "mean_risk": 0.50384
+  }
+}

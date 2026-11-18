@@ -1,0 +1,206 @@
+{
+  "name": "VFSim RiskGNN",
+  "architecture": "2-layer relation-aware heterogeneous attention",
+  "dataset": "synthetic VFS crash-recovery application-invariant oracle",
+  "limitations": "Simplified global-fsync snapshot semantics; not Linux block-level failures",
+  "samples": 5000,
+  "summary": {
+    "size": 5000,
+    "families": {
+      "size_pair": 1000,
+      "create_pair": 1000,
+      "mixed": 1000,
+      "link_pair": 1000,
+      "rename_pair": 500,
+      "unlink_pair": 500
+    },
+    "outcomes": {
+      "1": 2500,
+      "0": 2500
+    },
+    "operations": {
+      "write": 1333,
+      "create": 1325,
+      "link": 1342,
+      "rename": 500,
+      "unlink": 500
+    }
+  },
+  "train_families": [
+    "size_pair",
+    "create_pair",
+    "link_pair",
+    "mixed"
+  ],
+  "heldout_families": [
+    "rename_pair",
+    "unlink_pair"
+  ],
+  "split": {
+    "train": 3000,
+    "validation": 504,
+    "in_distribution_test": 496,
+    "heldout_family_test": 1000
+  },
+  "seed": 42,
+  "epochs": 6,
+  "validation": {
+    "samples": 504,
+    "positive": 252,
+    "accuracy": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "roc_auc": 1.0,
+    "average_precision": 1.0,
+    "loss": 0.0
+  },
+  "in_distribution_test": {
+    "samples": 496,
+    "positive": 248,
+    "accuracy": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "roc_auc": 1.0,
+    "average_precision": 1.0,
+    "loss": 0.0
+  },
+  "heldout_family_test": {
+    "samples": 1000,
+    "positive": 500,
+    "accuracy": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "roc_auc": 1.0,
+    "average_precision": 1.0,
+    "loss": 0.0
+  },
+  "test": {
+    "samples": 1000,
+    "positive": 500,
+    "accuracy": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "roc_auc": 1.0,
+    "average_precision": 1.0,
+    "loss": 0.0
+  },
+  "prioritization": {
+    "in_distribution": {
+      "candidate_count": 496,
+      "positive_candidates": 248,
+      "tests_to_first_violation": 1,
+      "budgets": {
+        "5pct": {
+          "tests": 25,
+          "violations_found": 25,
+          "precision_at_budget": 1.0,
+          "recall_at_budget": 0.1008
+        },
+        "10pct": {
+          "tests": 50,
+          "violations_found": 50,
+          "precision_at_budget": 1.0,
+          "recall_at_budget": 0.2016
+        },
+        "20pct": {
+          "tests": 99,
+          "violations_found": 99,
+          "precision_at_budget": 1.0,
+          "recall_at_budget": 0.3992
+        },
+        "50pct": {
+          "tests": 248,
+          "violations_found": 248,
+          "precision_at_budget": 1.0,
+          "recall_at_budget": 1.0
+        }
+      }
+    },
+    "heldout_families": {
+      "candidate_count": 1000,
+      "positive_candidates": 500,
+      "tests_to_first_violation": 1,
+      "budgets": {
+        "5pct": {
+          "tests": 50,
+          "violations_found": 50,
+          "precision_at_budget": 1.0,
+          "recall_at_budget": 0.1
+        },
+        "10pct": {
+          "tests": 100,
+          "violations_found": 100,
+          "precision_at_budget": 1.0,
+          "recall_at_budget": 0.2
+        },
+        "20pct": {
+          "tests": 200,
+          "violations_found": 200,
+          "precision_at_budget": 1.0,
+          "recall_at_budget": 0.4
+        },
+        "50pct": {
+          "tests": 500,
+          "violations_found": 500,
+          "precision_at_budget": 1.0,
+          "recall_at_budget": 1.0
+        }
+      }
+    }
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.0,
+      "train_accuracy": 1.0,
+      "val_loss": 0.0,
+      "val_accuracy": 1.0,
+      "val_f1": 1.0
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.0,
+      "train_accuracy": 1.0,
+      "val_loss": 0.0,
+      "val_accuracy": 1.0,
+      "val_f1": 1.0
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.0,
+      "train_accuracy": 1.0,
+      "val_loss": 0.0,
+      "val_accuracy": 1.0,
+      "val_f1": 1.0
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.0,
+      "train_accuracy": 1.0,
+      "val_loss": 0.0,
+      "val_accuracy": 1.0,
+      "val_f1": 1.0
+    },
+    {
+      "epoch": 5,
+      "train_loss": 0.0,
+      "train_accuracy": 1.0,
+      "val_loss": 0.0,
+      "val_accuracy": 1.0,
+      "val_f1": 1.0
+    },
+    {
+      "epoch": 6,
+      "train_loss": 0.0,
+      "train_accuracy": 1.0,
+      "val_loss": 0.0,
+      "val_accuracy": 1.0,
+      "val_f1": 1.0
+    }
+  ],
+  "trained_at": "2026-11-13T22:46:16.473538+00:00"
+}

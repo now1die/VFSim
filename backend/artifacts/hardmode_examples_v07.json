@@ -1,0 +1,1094 @@
+[
+  {
+    "id": "faultlab-03768",
+    "family": "atomic_pair",
+    "risk_probability": 0.48,
+    "writeback_probability": 0.4,
+    "constraint": "equal_versions",
+    "operand_paths": [
+      "/data/record",
+      "/log/record"
+    ],
+    "pending": {
+      "files": [
+        "i1",
+        "i2",
+        "i3"
+      ],
+      "directories": []
+    },
+    "operations": [
+      {
+        "kind": "create",
+        "paths": [
+          "/background/noise0"
+        ],
+        "step": 0,
+        "inode": "i1",
+        "version": 7
+      },
+      {
+        "kind": "create",
+        "paths": [
+          "/data/record"
+        ],
+        "step": 1,
+        "inode": "i2",
+        "version": 4
+      },
+      {
+        "kind": "create",
+        "paths": [
+          "/log/record"
+        ],
+        "step": 2,
+        "inode": "i3",
+        "version": 4
+      },
+      {
+        "kind": "durable_checkpoint",
+        "paths": [],
+        "step": 3
+      },
+      {
+        "kind": "write",
+        "paths": [
+          "/data/record"
+        ],
+        "step": 4,
+        "inode": "i2",
+        "version": 5
+      },
+      {
+        "kind": "write",
+        "paths": [
+          "/log/record"
+        ],
+        "step": 5,
+        "inode": "i3",
+        "version": 5
+      },
+      {
+        "kind": "write",
+        "paths": [
+          "/background/noise0"
+        ],
+        "step": 6,
+        "inode": "i1",
+        "version": 5
+      }
+    ],
+    "failure_example": {
+      "persisted_files": [
+        "i3"
+      ],
+      "persisted_directories": [],
+      "recovered_paths": {
+        "/background/noise0": "i1",
+        "/data/record": "i2",
+        "/log/record": "i3"
+      },
+      "recovered_versions": {
+        "i1": 7,
+        "i2": 4,
+        "i3": 5
+      }
+    },
+    "seed": 1213740507,
+    "gnn_predicted_risk": 0.48426
+  },
+  {
+    "id": "faultlab-04361",
+    "family": "write_ahead_log",
+    "risk_probability": 0.24,
+    "writeback_probability": 0.4,
+    "constraint": "requires_data",
+    "operand_paths": [
+      "/meta/commit",
+      "/data/payload"
+    ],
+    "pending": {
+      "files": [
+        "i2",
+        "i4",
+        "i5"
+      ],
+      "directories": []
+    },
+    "operations": [
+      {
+        "kind": "create",
+        "paths": [
+          "/background/noise0"
+        ],
+        "step": 0,
+        "inode": "i1",
+        "version": 2
+      },
+      {
+        "kind": "create",
+        "paths": [
+          "/background/noise1"
+        ],
+        "step": 1,
+        "inode": "i2",
+        "version": 0
+      },
+      {
+        "kind": "create",
+        "paths": [
+          "/background/noise2"
+        ],
+        "step": 2,
+        "inode": "i3",
+        "version": 7
+      },
+      {
+        "kind": "create",
+        "paths": [
+          "/meta/commit"
+        ],
+        "step": 3,
+        "inode": "i4",
+        "version": 4
+      },
+      {
+        "kind": "create",
+        "paths": [
+          "/data/payload"
+        ],
+        "step": 4,
+        "inode": "i5",
+        "version": 4
+      },
+      {
+        "kind": "durable_checkpoint",
+        "paths": [],
+        "step": 5
+      },
+      {
+        "kind": "write",
+        "paths": [
+          "/data/payload"
+        ],
+        "step": 6,
+        "inode": "i5",
+        "version": 5
+      },
+      {
+        "kind": "write",
+        "paths": [
+          "/meta/commit"
+        ],
+        "step": 7,
+        "inode": "i4",
+        "version": 5
+      },
+      {
+        "kind": "write",
+        "paths": [
+          "/background/noise0"
+        ],
+        "step": 8,
+        "inode": "i1",
+        "version": 7
+      },
+      {
+        "kind": "fsync_file",
+        "paths": [
+          "/background/noise0"
+        ],
+        "step": 9,
+        "inode": "i1"
+      },
+      {
+        "kind": "write",
+        "paths": [
+          "/background/noise1"
+        ],
+        "step": 10,
+        "inode": "i2",
+        "version": 10
+      }
+    ],
+    "failure_example": {
+      "persisted_files": [
+        "i4"
+      ],
+      "persisted_directories": [],
+      "recovered_paths": {
+        "/background/noise0": "i1",
+        "/background/noise1": "i2",
+        "/background/noise2": "i3",
+        "/meta/commit": "i4",
+        "/data/payload": "i5"
+      },
+      "recovered_versions": {
+        "i1": 7,
+        "i2": 0,
+        "i3": 7,
+        "i4": 5,
+        "i5": 4
+      }
+    },
+    "seed": 2937556411,
+    "gnn_predicted_risk": 0.26129
+  },
+  {
+    "id": "faultlab-00162",
+    "family": "staged_replace",
+    "risk_probability": 0.9375,
+    "writeback_probability": 0.25,
+    "constraint": "requires_data",
+    "operand_paths": [
+      "/meta/commit",
+      "/data/payload"
+    ],
+    "pending": {
+      "files": [
+        "i2",
+        "i3",
+        "i6"
+      ],
+      "directories": [
+        "/data"
+      ]
+    },
+    "operations": [
+      {
+        "kind": "create",
+        "paths": [
+          "/background/noise0"
+        ],
+        "step": 0,
+        "inode": "i1",
+        "version": 8
+      },
+      {
+        "kind": "create",
+        "paths": [
+          "/background/noise1"
+        ],
+        "step": 1,
+        "inode": "i2",
+        "version": 0
+      },
+      {
+        "kind": "create",
+        "paths": [
+          "/background/noise2"
+        ],
+        "step": 2,
+        "inode": "i3",
+        "version": 5
+      },
+      {
+        "kind": "create",
+        "paths": [
+          "/meta/commit"
+        ],
+        "step": 3,
+        "inode": "i4",
+        "version": 3
+      },
+      {
+        "kind": "create",
+        "paths": [
+          "/data/payload"
+        ],
+        "step": 4,
+        "inode": "i5",
+        "version": 3
+      },
+      {
+        "kind": "durable_checkpoint",
+        "paths": [],
+        "step": 5
+      },
+      {
+        "kind": "create",
+        "paths": [
+          "/stage/temp"
+        ],
+        "step": 6,
+        "inode": "i6",
+        "version": 0
+      },
+      {
+        "kind": "write",
+        "paths": [
+          "/stage/temp"
+        ],
+        "step": 7,
+        "inode": "i6",
+        "version": 4
+      },
+      {
+        "kind": "rename",
+        "paths": [
+          "/stage/temp",
+          "/data/payload"
+        ],
+        "step": 8,
+        "inode": "i6"
+      },
+      {
+        "kind": "write",
+        "paths": [
+          "/meta/commit"
+        ],
+        "step": 9,
+        "inode": "i4",
+        "version": 4
+      },
+      {
+        "kind": "fsync_file",
+        "paths": [
+          "/meta/commit"
+        ],
+        "step": 10,
+        "inode": "i4"
+      },
+      {
+        "kind": "write",
+        "paths": [
+          "/background/noise0"
+        ],
+        "step": 11,
+        "inode": "i1",
+        "version": 1
+      },
+      {
+        "kind": "fsync_file",
+        "paths": [
+          "/background/noise0"
+        ],
+        "step": 12,
+        "inode": "i1"
+      },
+      {
+        "kind": "write",
+        "paths": [
+          "/background/noise1"
+        ],
+        "step": 13,
+        "inode": "i2",
+        "version": 10
+      },
+      {
+        "kind": "write",
+        "paths": [
+          "/background/noise2"
+        ],
+        "step": 14,
+        "inode": "i3",
+        "version": 7
+      }
+    ],
+    "failure_example": {
+      "persisted_files": [],
+      "persisted_directories": [],
+      "recovered_paths": {
+        "/background/noise0": "i1",
+        "/background/noise1": "i2",
+        "/background/noise2": "i3",
+        "/meta/commit": "i4",
+        "/data/payload": "i5"
+      },
+      "recovered_versions": {
+        "i1": 1,
+        "i2": 0,
+        "i3": 5,
+        "i4": 4,
+        "i5": 3
+      }
+    },
+    "seed": 1825989011,
+    "gnn_predicted_risk": 0.86823
+  },
+  {
+    "id": "faultlab-04523",
+    "family": "hardlink_release",
+    "risk_probability": 0.75,
+    "writeback_probability": 0.25,
+    "constraint": "requires_data",
+    "operand_paths": [
+      "/meta/commit",
+      "/mirror/blob"
+    ],
+    "pending": {
+      "files": [
+        "i2",
+        "i3"
+      ],
+      "directories": [
+        "/mirror"
+      ]
+    },
+    "operations": [
+      {
+        "kind": "create",
+        "paths": [
+          "/background/noise0"
+        ],
+        "step": 0,
+        "inode": "i1",
+        "version": 7
+      },
+      {
+        "kind": "create",
+        "paths": [
+          "/background/noise1"
+        ],
+        "step": 1,
+        "inode": "i2",
+        "version": 4
+      },
+      {
+        "kind": "create",
+        "paths": [
+          "/data/blob"
+        ],
+        "step": 2,
+        "inode": "i3",
+        "version": 3
+      },
+      {
+        "kind": "link",
+        "paths": [
+          "/data/blob",
+          "/mirror/blob"
+        ],
+        "step": 3,
+        "inode": "i3"
+      },
+      {
+        "kind": "create",
+        "paths": [
+          "/meta/commit"
+        ],
+        "step": 4,
+        "inode": "i4",
+        "version": 3
+      },
+      {
+        "kind": "durable_checkpoint",
+        "paths": [],
+        "step": 5
+      },
+      {
+        "kind": "write",
+        "paths": [
+          "/mirror/blob"
+        ],
+        "step": 6,
+        "inode": "i3",
+        "version": 5
+      },
+      {
+        "kind": "write",
+        "paths": [
+          "/meta/commit"
+        ],
+        "step": 7,
+        "inode": "i4",
+        "version": 5
+      },
+      {
+        "kind": "fsync_file",
+        "paths": [
+          "/meta/commit"
+        ],
+        "step": 8,
+        "inode": "i4"
+      },
+      {
+        "kind": "link",
+        "paths": [
+          "/mirror/blob",
+          "/mirror/extra"
+        ],
+        "step": 9,
+        "inode": "i3"
+      },
+      {
+        "kind": "write",
+        "paths": [
+          "/background/noise1"
+        ],
+        "step": 10,
+        "inode": "i2",
+        "version": 7
+      }
+    ],
+    "failure_example": {
+      "persisted_files": [],
+      "persisted_directories": [],
+      "recovered_paths": {
+        "/background/noise0": "i1",
+        "/background/noise1": "i2",
+        "/data/blob": "i3",
+        "/mirror/blob": "i3",
+        "/meta/commit": "i4"
+      },
+      "recovered_versions": {
+        "i1": 7,
+        "i2": 4,
+        "i3": 3,
+        "i4": 5
+      }
+    },
+    "seed": 2987734263,
+    "gnn_predicted_risk": 0.75336
+  },
+  {
+    "id": "faultlab-03460",
+    "family": "directory_publish",
+    "risk_probability": 0.42,
+    "writeback_probability": 0.7,
+    "constraint": "presence_together",
+    "operand_paths": [
+      "/release/one",
+      "/another/two"
+    ],
+    "pending": {
+      "files": [],
+      "directories": [
+        "/another",
+        "/release",
+        "/staging"
+      ]
+    },
+    "operations": [
+      {
+        "kind": "create",
+        "paths": [
+          "/background/noise0"
+        ],
+        "step": 0,
+        "inode": "i1",
+        "version": 7
+      },
+      {
+        "kind": "create",
+        "paths": [
+          "/staging/one"
+        ],
+        "step": 1,
+        "inode": "i2",
+        "version": 1
+      },
+      {
+        "kind": "create",
+        "paths": [
+          "/staging/two"
+        ],
+        "step": 2,
+        "inode": "i3",
+        "version": 1
+      },
+      {
+        "kind": "durable_checkpoint",
+        "paths": [],
+        "step": 3
+      },
+      {
+        "kind": "rename",
+        "paths": [
+          "/staging/one",
+          "/release/one"
+        ],
+        "step": 4,
+        "inode": "i2"
+      },
+      {
+        "kind": "rename",
+        "paths": [
+          "/staging/two",
+          "/another/two"
+        ],
+        "step": 5,
+        "inode": "i3"
+      }
+    ],
+    "failure_example": {
+      "persisted_files": [],
+      "persisted_directories": [
+        "/release"
+      ],
+      "recovered_paths": {
+        "/background/noise0": "i1",
+        "/staging/one": "i2",
+        "/staging/two": "i3",
+        "/release/one": "i2"
+      },
+      "recovered_versions": {
+        "i1": 7,
+        "i2": 1,
+        "i3": 1
+      }
+    },
+    "seed": 1680888691,
+    "gnn_predicted_risk": 0.42517
+  },
+  {
+    "id": "faultlab-01773",
+    "family": "garbage_collect",
+    "risk_probability": 0.21,
+    "writeback_probability": 0.7,
+    "constraint": "required_if_present",
+    "operand_paths": [
+      "/meta/reference",
+      "/store/blob"
+    ],
+    "pending": {
+      "files": [
+        "i1"
+      ],
+      "directories": [
+        "/meta",
+        "/store"
+      ]
+    },
+    "operations": [
+      {
+        "kind": "create",
+        "paths": [
+          "/background/noise0"
+        ],
+        "step": 0,
+        "inode": "i1",
+        "version": 2
+      },
+      {
+        "kind": "create",
+        "paths": [
+          "/background/noise1"
+        ],
+        "step": 1,
+        "inode": "i2",
+        "version": 4
+      },
+      {
+        "kind": "create",
+        "paths": [
+          "/meta/reference"
+        ],
+        "step": 2,
+        "inode": "i3",
+        "version": 2
+      },
+      {
+        "kind": "create",
+        "paths": [
+          "/store/blob"
+        ],
+        "step": 3,
+        "inode": "i4",
+        "version": 2
+      },
+      {
+        "kind": "durable_checkpoint",
+        "paths": [],
+        "step": 4
+      },
+      {
+        "kind": "unlink",
+        "paths": [
+          "/store/blob"
+        ],
+        "step": 5,
+        "inode": "i4"
+      },
+      {
+        "kind": "unlink",
+        "paths": [
+          "/meta/reference"
+        ],
+        "step": 6,
+        "inode": "i3"
+      },
+      {
+        "kind": "write",
+        "paths": [
+          "/background/noise0"
+        ],
+        "step": 7,
+        "inode": "i1",
+        "version": 7
+      },
+      {
+        "kind": "write",
+        "paths": [
+          "/background/noise1"
+        ],
+        "step": 8,
+        "inode": "i2",
+        "version": 9
+      },
+      {
+        "kind": "fsync_file",
+        "paths": [
+          "/background/noise1"
+        ],
+        "step": 9,
+        "inode": "i2"
+      }
+    ],
+    "failure_example": {
+      "persisted_files": [],
+      "persisted_directories": [
+        "/store"
+      ],
+      "recovered_paths": {
+        "/background/noise0": "i1",
+        "/background/noise1": "i2",
+        "/meta/reference": "i3"
+      },
+      "recovered_versions": {
+        "i1": 2,
+        "i2": 9,
+        "i3": 2,
+        "i4": 2
+      }
+    },
+    "seed": 4168425428,
+    "gnn_predicted_risk": 0.21839
+  },
+  {
+    "id": "faultlab-02750",
+    "family": "hardlink_retarget",
+    "risk_probability": 0.6,
+    "writeback_probability": 0.4,
+    "constraint": "requires_data",
+    "operand_paths": [
+      "/meta/commit",
+      "/mirror/current"
+    ],
+    "pending": {
+      "files": [
+        "i1"
+      ],
+      "directories": [
+        "/mirror"
+      ]
+    },
+    "operations": [
+      {
+        "kind": "create",
+        "paths": [
+          "/background/noise0"
+        ],
+        "step": 0,
+        "inode": "i1",
+        "version": 7
+      },
+      {
+        "kind": "create",
+        "paths": [
+          "/data/old"
+        ],
+        "step": 1,
+        "inode": "i2",
+        "version": 4
+      },
+      {
+        "kind": "create",
+        "paths": [
+          "/data/new"
+        ],
+        "step": 2,
+        "inode": "i3",
+        "version": 7
+      },
+      {
+        "kind": "link",
+        "paths": [
+          "/data/old",
+          "/mirror/current"
+        ],
+        "step": 3,
+        "inode": "i2"
+      },
+      {
+        "kind": "create",
+        "paths": [
+          "/meta/commit"
+        ],
+        "step": 4,
+        "inode": "i4",
+        "version": 4
+      },
+      {
+        "kind": "durable_checkpoint",
+        "paths": [],
+        "step": 5
+      },
+      {
+        "kind": "unlink",
+        "paths": [
+          "/mirror/current"
+        ],
+        "step": 6,
+        "inode": "i2"
+      },
+      {
+        "kind": "link",
+        "paths": [
+          "/data/new",
+          "/mirror/current"
+        ],
+        "step": 7,
+        "inode": "i3"
+      },
+      {
+        "kind": "write",
+        "paths": [
+          "/meta/commit"
+        ],
+        "step": 8,
+        "inode": "i4",
+        "version": 7
+      },
+      {
+        "kind": "fsync_file",
+        "paths": [
+          "/meta/commit"
+        ],
+        "step": 9,
+        "inode": "i4"
+      },
+      {
+        "kind": "write",
+        "paths": [
+          "/background/noise0"
+        ],
+        "step": 10,
+        "inode": "i1",
+        "version": 4
+      }
+    ],
+    "failure_example": {
+      "persisted_files": [],
+      "persisted_directories": [],
+      "recovered_paths": {
+        "/background/noise0": "i1",
+        "/data/old": "i2",
+        "/data/new": "i3",
+        "/mirror/current": "i2",
+        "/meta/commit": "i4"
+      },
+      "recovered_versions": {
+        "i1": 7,
+        "i2": 4,
+        "i3": 7,
+        "i4": 7
+      }
+    },
+    "seed": 234536518,
+    "gnn_predicted_risk": 0.53777
+  },
+  {
+    "id": "faultlab-03375",
+    "family": "sharded_commit",
+    "risk_probability": 0.936,
+    "writeback_probability": 0.4,
+    "constraint": "equal_versions",
+    "operand_paths": [
+      "/shard0/data",
+      "/shard1/data",
+      "/shard2/data",
+      "/shard3/data"
+    ],
+    "pending": {
+      "files": [
+        "i2",
+        "i5",
+        "i6",
+        "i7"
+      ],
+      "directories": []
+    },
+    "operations": [
+      {
+        "kind": "create",
+        "paths": [
+          "/background/noise0"
+        ],
+        "step": 0,
+        "inode": "i1",
+        "version": 3
+      },
+      {
+        "kind": "create",
+        "paths": [
+          "/background/noise1"
+        ],
+        "step": 1,
+        "inode": "i2",
+        "version": 2
+      },
+      {
+        "kind": "create",
+        "paths": [
+          "/background/noise2"
+        ],
+        "step": 2,
+        "inode": "i3",
+        "version": 6
+      },
+      {
+        "kind": "create",
+        "paths": [
+          "/shard0/data"
+        ],
+        "step": 3,
+        "inode": "i4",
+        "version": 2
+      },
+      {
+        "kind": "create",
+        "paths": [
+          "/shard1/data"
+        ],
+        "step": 4,
+        "inode": "i5",
+        "version": 2
+      },
+      {
+        "kind": "create",
+        "paths": [
+          "/shard2/data"
+        ],
+        "step": 5,
+        "inode": "i6",
+        "version": 2
+      },
+      {
+        "kind": "create",
+        "paths": [
+          "/shard3/data"
+        ],
+        "step": 6,
+        "inode": "i7",
+        "version": 2
+      },
+      {
+        "kind": "durable_checkpoint",
+        "paths": [],
+        "step": 7
+      },
+      {
+        "kind": "write",
+        "paths": [
+          "/shard0/data"
+        ],
+        "step": 8,
+        "inode": "i4",
+        "version": 4
+      },
+      {
+        "kind": "fsync_file",
+        "paths": [
+          "/shard0/data"
+        ],
+        "step": 9,
+        "inode": "i4"
+      },
+      {
+        "kind": "write",
+        "paths": [
+          "/shard1/data"
+        ],
+        "step": 10,
+        "inode": "i5",
+        "version": 4
+      },
+      {
+        "kind": "write",
+        "paths": [
+          "/shard2/data"
+        ],
+        "step": 11,
+        "inode": "i6",
+        "version": 4
+      },
+      {
+        "kind": "write",
+        "paths": [
+          "/shard3/data"
+        ],
+        "step": 12,
+        "inode": "i7",
+        "version": 4
+      },
+      {
+        "kind": "write",
+        "paths": [
+          "/background/noise0"
+        ],
+        "step": 13,
+        "inode": "i1",
+        "version": 1
+      },
+      {
+        "kind": "fsync_file",
+        "paths": [
+          "/background/noise0"
+        ],
+        "step": 14,
+        "inode": "i1"
+      },
+      {
+        "kind": "write",
+        "paths": [
+          "/background/noise1"
+        ],
+        "step": 15,
+        "inode": "i2",
+        "version": 3
+      },
+      {
+        "kind": "write",
+        "paths": [
+          "/background/noise2"
+        ],
+        "step": 16,
+        "inode": "i3",
+        "version": 7
+      },
+      {
+        "kind": "fsync_file",
+        "paths": [
+          "/background/noise2"
+        ],
+        "step": 17,
+        "inode": "i3"
+      }
+    ],
+    "failure_example": {
+      "persisted_files": [],
+      "persisted_directories": [],
+      "recovered_paths": {
+        "/background/noise0": "i1",
+        "/background/noise1": "i2",
+        "/background/noise2": "i3",
+        "/shard0/data": "i4",
+        "/shard1/data": "i5",
+        "/shard2/data": "i6",
+        "/shard3/data": "i7"
+      },
+      "recovered_versions": {
+        "i1": 1,
+        "i2": 2,
+        "i3": 7,
+        "i4": 4,
+        "i5": 2,
+        "i6": 2,
+        "i7": 2
+      }
+    },
+    "seed": 1456082867,
+    "gnn_predicted_risk": 0.53031
+  }
+]
