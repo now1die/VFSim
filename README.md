@@ -38,9 +38,9 @@ See the [setup guide](docs/SETUP.md) for Windows instructions and single-port ho
 
 ## Screenshots
 
-![VFSim overview after running filesystem operations](docs/screenshots/01_overview.png)
+![VFSim desktop Overview with the clickable skyline and live filesystem graph](docs/screenshots/overview-desktop.png)
 
-[Graph Explorer](docs/screenshots/02_graph_explorer.png) · [Transactions](docs/screenshots/03_transactions.png) · [Crash Lab](docs/screenshots/05_crash_lab.png) · [GNN node inspector](docs/screenshots/08_gnn_selected_node.png) · [Full gallery](docs/SCREENSHOTS.md)
+[Filesystem graph](docs/screenshots/filesystem-desktop.png) · [Mobile Overview](docs/screenshots/overview-mobile.png) · [Mobile filesystem graph](docs/screenshots/filesystem-mobile.png) · [Full gallery](docs/SCREENSHOTS.md)
 
 ## Architecture
 
