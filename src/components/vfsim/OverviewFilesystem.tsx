@@ -1,17 +1,19 @@
-import { Link } from "@tanstack/react-router";
-import { Database, File, Folder } from "lucide-react";
-import { useId } from "react";
+import { ArrowRight, Database, File, Folder, Maximize, Minus, Plus } from "lucide-react";
+import { useId, useRef, useState } from "react";
 
 import type { FsEdge, FsNode } from "@/services/types";
 
-const nodeHeight = 34;
-const columnWidth = 154;
-const rowHeight = 76;
+const nodeHeight = 47;
+const columnWidth = 180;
+const rowHeight = 91;
+const minimumZoom = 0.25;
+const maximumZoom = 2;
 const top = 18;
 
 interface PositionedNode {
   id: string;
   label: string;
+  inodeNumber?: number | undefined;
   path: string;
   kind: "directory" | "file" | "shared";
   x: number;
@@ -52,6 +54,7 @@ function layoutFilesystem(nodes: FsNode[], edges: FsEdge[]) {
       id: entry.id,
       label: depth === 1 && inode.kind === "directory" ? entry.path : entry.name,
       path: entry.path,
+      inodeNumber: inode.inodeNumber,
       kind: inode.kind === "directory" ? "directory" : "file",
       x: 0,
       y: top + depth * rowHeight,
@@ -59,10 +62,7 @@ function layoutFilesystem(nodes: FsNode[], edges: FsEdge[]) {
     namespace.push(node);
     maxDepth = Math.max(maxDepth, depth);
 
-    const entries =
-      node.kind === "directory"
-        ? [...(entriesByDirectory.get(inode.id) ?? [])].sort((a, b) => a.name.localeCompare(b.name))
-        : [];
+    const entries = node.kind === "directory" ? (entriesByDirectory.get(inode.id) ?? []) : [];
     const children = entries.map((child) =>
       place(child, targetByEntry.get(child.id) ?? child, depth + 1),
     );
@@ -86,7 +86,12 @@ function layoutFilesystem(nodes: FsNode[], edges: FsEdge[]) {
 
   place(root, root, 0);
 
-  const sharedInodes: { inode: PositionedNode; files: PositionedNode[] }[] = [];
+  const sharedInodes: {
+    inode: PositionedNode;
+    files: PositionedNode[];
+    rail: number;
+    primaryPath: string;
+  }[] = [];
   const namespaceBottom = top + maxDepth * rowHeight + nodeHeight;
   for (const [inode, files] of filesByInode) {
     const first = files[0];
@@ -99,9 +104,11 @@ function layoutFilesystem(nodes: FsNode[], edges: FsEdge[]) {
         path: "",
         kind: "shared",
         x: (first.x + last.x) / 2,
-        y: namespaceBottom + 64 + sharedInodes.length * rowHeight,
+        y: namespaceBottom + 55 + sharedInodes.length * rowHeight,
       },
       files,
+      primaryPath: files.find((file) => file.path === inode.path)?.path ?? first.path,
+      rail: namespaceBottom + 30 + sharedInodes.length * rowHeight,
     });
   }
 
@@ -114,39 +121,92 @@ function layoutFilesystem(nodes: FsNode[], edges: FsEdge[]) {
   };
 }
 
-function FilesystemNode({ node, linked = false }: { node: PositionedNode; linked?: boolean }) {
+function FilesystemNode({
+  node,
+  selected,
+  onSelect,
+  linkStyle,
+}: {
+  node: PositionedNode;
+  selected: boolean;
+  onSelect: () => void;
+  linkStyle?: "first" | "alias" | undefined;
+}) {
   const Icon = node.kind === "directory" ? Folder : node.kind === "shared" ? Database : File;
   return (
-    <div
+    <button
+      type="button"
       className={`overview-fs-node overview-fs-node-${node.kind}`}
       style={{ left: node.x, top: node.y, height: nodeHeight }}
       title={node.path || "Shared inode for the connected filenames"}
       data-path={node.path || undefined}
-      data-linked={linked || undefined}
+      data-long-name={node.label.length > 14 || undefined}
+      data-linked={linkStyle}
+      aria-pressed={selected}
+      onClick={onSelect}
     >
-      <Icon size={16} aria-hidden="true" />
-      <span>{node.label}</span>
-    </div>
+      <span className="overview-fs-node-name">
+        <Icon size={15} aria-hidden="true" />
+        <span>{node.label}</span>
+      </span>
+      {node.inodeNumber !== undefined && <small>Inode {node.inodeNumber}</small>}
+    </button>
   );
 }
 
 export function OverviewFilesystem({ nodes, edges }: { nodes: FsNode[]; edges: FsEdge[] }) {
   const arrowId = useId();
+  const viewport = useRef<HTMLDivElement>(null);
+  const [selectedNode, select] = useState("/");
+  const [zoom, setZoom] = useState(1);
   const layout = layoutFilesystem(nodes, edges);
   if (!layout)
     return <p className="text-sm text-muted-foreground">The root directory is unavailable.</p>;
 
-  const linkedIds = new Set(layout.sharedInodes.flatMap(({ files }) => files.map(({ id }) => id)));
+  const allNodes = [...layout.namespace, ...layout.sharedInodes.map(({ inode }) => inode)];
+  const activeNode = allNodes.some(({ id, path }) => (path || id) === selectedNode)
+    ? selectedNode
+    : "/";
+  const linkedIds = new Map(
+    layout.sharedInodes.flatMap(({ files, primaryPath }) =>
+      files.map(({ id, path }) => [id, path === primaryPath ? "first" : "alias"] as const),
+    ),
+  );
+  const edgeCount = layout.branches.reduce(
+    (count, { children }) => count + children.length,
+    linkedIds.size,
+  );
+  const typeCount = new Set(allNodes.map(({ kind }) => kind)).size;
+
+  function changeZoom(factor: number) {
+    setZoom((current) => Math.min(maximumZoom, Math.max(minimumZoom, current * factor)));
+  }
+
+  function fitGraph() {
+    const area = viewport.current;
+    if (!area || !layout) return;
+    setZoom(
+      Math.max(
+        minimumZoom,
+        Math.min(1, (area.clientWidth - 12) / layout.width, area.clientHeight / layout.height),
+      ),
+    );
+    area.scrollTo(0, 0);
+  }
 
   return (
     <figure className="overview-fs">
       <div
         className="overview-fs-scroll"
+        ref={viewport}
         tabIndex={0}
         role="region"
         aria-label="Filesystem diagram"
       >
-        <div className="overview-fs-canvas" style={{ width: layout.width, height: layout.height }}>
+        <div
+          className="overview-fs-canvas"
+          style={{ width: layout.width, height: layout.height, zoom }}
+        >
           <svg
             className="overview-fs-edges"
             width={layout.width}
@@ -163,7 +223,7 @@ export function OverviewFilesystem({ nodes, edges }: { nodes: FsNode[]; edges: F
                 refY="4"
                 orient="auto"
               >
-                <path d="M 1 1 L 7 4 L 1 7" fill="none" stroke="context-stroke" strokeWidth="1.5" />
+                <path d="M 0 0 L 8 4 L 0 8 Z" fill="context-stroke" stroke="none" />
               </marker>
             </defs>
             {layout.branches.map(({ parent, children }) => {
@@ -184,18 +244,15 @@ export function OverviewFilesystem({ nodes, edges }: { nodes: FsNode[]; edges: F
                 </g>
               );
             })}
-            {layout.sharedInodes.map(({ inode, files }) => (
+            {layout.sharedInodes.map(({ inode, files, rail }) => (
               <g className="overview-fs-link" key={inode.id}>
                 {files.map((file) => (
                   <path
                     key={file.id}
-                    d={`M ${file.x} ${file.y + nodeHeight} V ${inode.y - 20} H ${inode.x}`}
+                    d={`M ${file.x} ${file.y + nodeHeight} V ${rail} H ${inode.x}`}
                   />
                 ))}
-                <path
-                  d={`M ${inode.x} ${inode.y - 20} V ${inode.y - 3}`}
-                  markerEnd={`url(#${arrowId})`}
-                />
+                <path d={`M ${inode.x} ${rail} V ${inode.y - 3}`} markerEnd={`url(#${arrowId})`} />
               </g>
             ))}
           </svg>
@@ -212,11 +269,24 @@ export function OverviewFilesystem({ nodes, edges }: { nodes: FsNode[]; edges: F
               contains
             </span>
           ))}
-          {layout.namespace.map((node) => (
-            <FilesystemNode key={node.id} node={node} linked={linkedIds.has(node.id)} />
+          {layout.sharedInodes.map(({ inode, rail }) => (
+            <span
+              key={inode.id}
+              className="overview-fs-edge-label overview-fs-hardlink-label"
+              style={{ left: inode.x, top: rail }}
+              aria-hidden="true"
+            >
+              hard link
+            </span>
           ))}
-          {layout.sharedInodes.map(({ inode }) => (
-            <FilesystemNode key={inode.id} node={inode} />
+          {allNodes.map((node) => (
+            <FilesystemNode
+              key={node.id}
+              node={node}
+              selected={activeNode === (node.path || node.id)}
+              onSelect={() => select(node.path || node.id)}
+              linkStyle={linkedIds.get(node.id)}
+            />
           ))}
         </div>
       </div>
@@ -226,14 +296,63 @@ export function OverviewFilesystem({ nodes, edges }: { nodes: FsNode[]; edges: F
         </span>
       ))}
       <figcaption className="overview-fs-caption">
-        {layout.sharedInodes.length > 0 && (
+        <div className="overview-fs-legend">
+          <span className="overview-fs-caption-label">Legend</span>
           <span>
-            <i aria-hidden="true" /> Hard links share an inode
+            <Folder size={14} className="overview-fs-folder-key" aria-hidden="true" /> Directory
           </span>
-        )}
-        <Link to="/graph">
-          Open Graph Explorer <span aria-hidden="true">→</span>
-        </Link>
+          <span>
+            <File size={14} aria-hidden="true" /> File
+          </span>
+          <span>
+            <ArrowRight size={14} aria-hidden="true" /> Contains
+          </span>
+          <span>
+            <i className="overview-fs-dashed-key" aria-hidden="true" /> Hard link
+          </span>
+          <span>
+            <i className="overview-fs-selection-key" aria-hidden="true" /> Selected
+          </span>
+        </div>
+        <div className="overview-fs-status">
+          <dl>
+            <div>
+              <dt>Nodes</dt>
+              <dd>{allNodes.length}</dd>
+            </div>
+            <div>
+              <dt>Edges</dt>
+              <dd>{edgeCount}</dd>
+            </div>
+            <div>
+              <dt>Types</dt>
+              <dd>{typeCount}</dd>
+            </div>
+          </dl>
+          <div className="overview-fs-controls" role="group" aria-label="Graph zoom controls">
+            <button type="button" title="Fit graph" aria-label="Fit graph" onClick={fitGraph}>
+              <Maximize size={15} />
+            </button>
+            <button
+              type="button"
+              title="Zoom out"
+              aria-label="Zoom out"
+              disabled={zoom <= minimumZoom}
+              onClick={() => changeZoom(0.8)}
+            >
+              <Minus size={15} />
+            </button>
+            <button
+              type="button"
+              title="Zoom in"
+              aria-label="Zoom in"
+              disabled={zoom >= maximumZoom}
+              onClick={() => changeZoom(1.25)}
+            >
+              <Plus size={15} />
+            </button>
+          </div>
+        </div>
       </figcaption>
     </figure>
   );

@@ -153,7 +153,12 @@ function OriginalOverview() {
       )}
 
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.9fr)]">
-        <Panel title="Filesystem structure" subtitle="Live graph topology · directories, files, and inode links" icon={GitBranch}>
+        <Panel
+          title="Filesystem graph"
+          icon={GitBranch}
+          bodyClassName="overview-fs-panel"
+          actions={<Link to="/graph" className="overview-fs-explorer">Graph Explorer <span aria-hidden="true">→</span></Link>}
+        >
           {graph.isPending ? <LoadingState label="Loading filesystem graph" rows={3} /> : graph.isError || !graph.data ? <ErrorState message="Filesystem graph is unavailable." onRetry={() => void graph.refetch()} /> : graph.data.nodes.length === 0 ? <EmptyState title="Filesystem graph is empty" /> : <OverviewFilesystem nodes={graph.data.nodes} edges={graph.data.edges} />}
         </Panel>
         <Panel title="Crash-risk trend" subtitle="Predicted risk; observed outcome appears only when measured" icon={ShieldAlert}>
