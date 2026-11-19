@@ -35,7 +35,7 @@ import {
   StatCard,
 } from "@/components/vfsim/primitives";
 import { useSelection } from "@/components/vfsim/selection";
-import { GraphExplorer } from "@/components/vfsim/GraphExplorer";
+import { OverviewFilesystem } from "@/components/vfsim/OverviewFilesystem";
 import { api } from "@/services/api";
 
 export const Route = createFileRoute("/")({
@@ -59,14 +59,12 @@ export const Route = createFileRoute("/")({
   component: Overview,
 });
 
-// These five links reuse the existing TanStack routes; the skyline is a navigation
-// surface, never a source of graph, transaction, or model data.
 const skylineDestinations = [
-  { to: "/graph", label: "Graph Explorer", lines: ["Graph", "Explorer"], icon: GitBranch },
-  { to: "/transactions", label: "Transactions", lines: ["Trans-", "actions"], icon: ListTree },
-  { to: "/risk", label: "Risk Analysis", lines: ["Risk", "Analysis"], icon: ShieldAlert },
-  { to: "/simulation", label: "Crash Lab", lines: ["Crash", "Lab"], icon: Zap },
-  { to: "/model", label: "GNN Model", lines: ["GNN", "Model"], icon: BrainCircuit },
+  { to: "/graph", label: "Graph Explorer", building: "graph", icon: GitBranch },
+  { to: "/transactions", label: "Transactions", building: "transactions", icon: ListTree },
+  { to: "/risk", label: "Risk Analysis", building: "risk", icon: ShieldAlert },
+  { to: "/simulation", label: "Crash Lab", building: "crash", icon: Zap },
+  { to: "/model", label: "GNN Model", building: "model", icon: BrainCircuit },
 ] as const;
 
 const chartAxis = { stroke: "var(--muted-foreground)", fontSize: 11 };
@@ -96,21 +94,19 @@ function OriginalOverview() {
         <div className="pixel-depth-frame"><div className="pixel-window overview-skyline" aria-label="Pixel sunset over a city">
           <div className="pixel-window-title"><span>Research environment</span><span className="pixel-window-controls" aria-hidden="true"><span /><span /><span /></span></div>
           <nav className="overview-skyline-scene" aria-label="Explore VFSim sections from the city skyline">
-            <span className="scene-cloud scene-cloud-one" /><span className="scene-cloud scene-cloud-two" />
-            <span className="scene-sun" /><span className="scene-mountain scene-mountain-back" /><span className="scene-mountain scene-mountain-front" />
-            {skylineDestinations.map(({ to, label, lines, icon: Icon }, index) => (
-              <Link
-                key={to}
-                to={to}
-                className={`scene-city scene-city-${["one", "two", "three", "four", "five"][index]}`}
-                aria-label={`Open ${label}`}
-                title={`Open ${label}`}
-              >
-                <span className="scene-city-rooftop" aria-hidden="true"><Icon /></span>
-                <span className="scene-city-label" aria-hidden="true">
-                  {lines.map((line) => <span key={line}>{line}</span>)}
-                </span>
-                <span className="scene-city-tooltip" aria-hidden="true">Open {label}</span>
+            <div className="scene-backdrop" aria-hidden="true">
+              <span className="scene-sun" />
+              <span className="scene-cloud scene-cloud-one" />
+              <span className="scene-cloud scene-cloud-two" />
+              <span className="scene-cloud scene-cloud-three" />
+              <span className="scene-mountain scene-mountain-back" />
+              <span className="scene-mountain scene-mountain-front" />
+              <span className="scene-city-base" />
+            </div>
+            {skylineDestinations.map(({ to, label, building, icon: Icon }) => (
+              <Link key={to} to={to} className={`scene-city scene-city-${building}`} aria-label={`Open ${label}`}>
+                <span className="scene-city-sign" aria-hidden="true"><Icon /></span>
+                <span className="scene-city-tooltip" aria-hidden="true">{label}</span>
               </Link>
             ))}
           </nav>
@@ -158,7 +154,7 @@ function OriginalOverview() {
 
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.9fr)]">
         <Panel title="Filesystem structure" subtitle="Live graph topology · directories, files, and inode links" icon={GitBranch}>
-          {graph.isPending ? <LoadingState label="Loading filesystem graph" rows={3} /> : graph.isError || !graph.data ? <ErrorState message="Filesystem graph is unavailable." onRetry={() => void graph.refetch()} /> : graph.data.nodes.length === 0 ? <EmptyState title="Filesystem graph is empty" /> : <GraphExplorer nodes={graph.data.nodes} edges={graph.data.edges} touched={graph.data.touched} selectedId={null} onSelect={() => undefined} compact />}
+          {graph.isPending ? <LoadingState label="Loading filesystem graph" rows={3} /> : graph.isError || !graph.data ? <ErrorState message="Filesystem graph is unavailable." onRetry={() => void graph.refetch()} /> : graph.data.nodes.length === 0 ? <EmptyState title="Filesystem graph is empty" /> : <OverviewFilesystem nodes={graph.data.nodes} edges={graph.data.edges} />}
         </Panel>
         <Panel title="Crash-risk trend" subtitle="Predicted risk; observed outcome appears only when measured" icon={ShieldAlert}>
           {risk.isPending ? (
