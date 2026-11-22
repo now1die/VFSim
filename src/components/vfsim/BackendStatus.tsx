@@ -1,14 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { Radio } from "lucide-react";
 
-import { API_BASE_URL, api } from "@/services/api";
+import { api } from "@/services/api";
 import { cn } from "@/lib/utils";
 
 export function BackendStatusBadge({ className }: { className?: string }) {
   const { data, isError, isPending } = useQuery({
     queryKey: ["health"],
     queryFn: () => api.getHealth(),
-    refetchInterval: 30_000,
+    staleTime: 60_000,
   });
 
   const Icon = Radio;
@@ -24,14 +24,17 @@ export function BackendStatusBadge({ className }: { className?: string }) {
             : "border-live/50 bg-live/15 text-live",
         className,
       )}
-      title={`Backend: ${API_BASE_URL}`}
+      role="status"
     >
       <Icon className="size-3.5" aria-hidden />
-        {isError ? "Backend offline" : isPending ? "Connecting…" : "Backend live"}
+      {isError
+        ? "Backend offline"
+        : isPending
+          ? "Connecting… (up to a minute on Free)"
+          : "Backend live"}
       <span className="hidden font-normal normal-case tracking-normal text-muted-foreground sm:inline">
         {isError ? "Unavailable" : (data?.version ?? "connecting…")}
       </span>
     </div>
   );
 }
-

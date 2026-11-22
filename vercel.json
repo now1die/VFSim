@@ -1,0 +1,7 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "tanstack-start",
+  "fluid": true,
+  "installCommand": "npm ci --include=dev",
+  "buildCommand": "npm run build:vercel"
+}

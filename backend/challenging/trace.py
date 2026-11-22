@@ -5,7 +5,7 @@ from pathlib import Path
 import json
 import torch
 from challenging.generator import make_workload, ALL_FAMILIES
-from challenging.independent import EXTERNAL_FAMILIES, external_cases
+from challenging.independent import EXTERNAL_FAMILIES, iter_external_cases
 from challenging.graphs import make_graph, EDGE_TYPES, CONSTRAINTS, OP_TYPES
 from challenging.model import CrashRiskGNN
 
@@ -39,9 +39,13 @@ def model_and_metadata(version='v08'):
     return model,state.get('metadata',{}),path
 
 
-@lru_cache(maxsize=1)
-def _external_cohort():
-    return external_cases(per_family=240)
+@lru_cache(maxsize=len(EXTERNAL_FAMILIES))
+def _external_example(family):
+    cases = iter_external_cases(selected_family=family)
+    first = next(cases)
+    if .07 < first['risk_probability'] < .95:
+        return first
+    return next((case for case in cases if .07 < case['risk_probability'] < .95), first)
 
 
 def trace_saved_family(family,version='v08'):
@@ -49,8 +53,7 @@ def trace_saved_family(family,version='v08'):
     if version.startswith('v09_s') and family in EXTERNAL_FAMILIES:
         # Fixed example selection depends only on oracle risk band, NEVER on
         # the GNN's prediction or attention, so no cherry-picked model example.
-        matching=[c for c in _external_cohort() if c['family']==family]
-        selected=next((c for c in matching if .07<c['risk_probability']<.95),matching[0])
+        selected = _external_example(family)
         sim,constraint=selected['sim'],selected['constraint']
         p=float(selected['writeback_probability'])
         record={'id':selected['id'],'risk_probability':selected['risk_probability']}

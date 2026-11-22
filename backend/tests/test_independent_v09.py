@@ -7,7 +7,7 @@ import pytest
 import torch
 
 from challenging.generator import ALL_FAMILIES,TRAIN_FAMILIES
-from challenging.independent import EXTERNAL_FAMILIES,POLICIES,external_cases,make_external_workload
+from challenging.independent import EXTERNAL_FAMILIES,POLICIES,external_cases,iter_external_cases,make_external_workload
 from challenging.graphs import make_graph
 from challenging.simulator import check_constraint
 from challenging.multiseed import fixed_manifest,paired_seed_summary
@@ -165,3 +165,14 @@ def test_research_views_integrated_into_actual_tanstack_frontend():
     from fastapi.testclient import TestClient
     from main import app
     assert TestClient(app).get('/api/research/independent-v09').status_code == 200
+
+
+
+def test_streaming_one_external_family_preserves_candidate_order_and_oracles():
+    full = external_cases(per_family=3)
+    fields = ("id", "seed", "writeback_probability", "risk_probability")
+    for family in EXTERNAL_FAMILIES:
+        streamed = iter_external_cases(per_family=3, selected_family=family)
+        assert [tuple(case[key] for key in fields) for case in streamed] == [
+            tuple(case[key] for key in fields) for case in full if case["family"] == family
+        ]

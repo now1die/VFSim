@@ -148,19 +148,25 @@ def external_cases(per_family: int = 240, seed: int = EXTERNAL_SEED):
     This cohort must not be consulted for epoch/architecture/parameter selection.
     Use fixed n, seed and independent scenario seeds across every model run.
     """
-    if per_family < 1: raise ValueError('At least one case per family')
+    return list(iter_external_cases(per_family, seed))
+
+
+def iter_external_cases(per_family: int = 240, seed: int = EXTERNAL_SEED, *, selected_family=None):
+    """Stream exact cohort cases, advancing the shared RNG for skipped families."""
+    if per_family < 1:
+        raise ValueError('At least one case per family')
     r = random.Random(seed)
-    out = []
     for family in EXTERNAL_FAMILIES:
         for j in range(per_family):
             run_seed = r.randrange(2**32)
-            fs, constraint = make_external_workload(family, run_seed)
             policy = POLICIES[r.randrange(len(POLICIES))]
+            if selected_family is not None and family != selected_family:
+                continue
+            fs, constraint = make_external_workload(family, run_seed)
             risk, _ = fs.exact_failure_probability(constraint, policy)
-            out.append({'id': f'external/{family}/{j:04d}', 'family': family,
-                        'seed': run_seed, 'sim': fs, 'constraint': constraint,
-                        'writeback_probability': policy, 'risk_probability': risk})
-    return out
+            yield {'id': f'external/{family}/{j:04d}', 'family': family,
+                   'seed': run_seed, 'sim': fs, 'constraint': constraint,
+                   'writeback_probability': policy, 'risk_probability': risk}
 
 
 def cohort_summary(cases):

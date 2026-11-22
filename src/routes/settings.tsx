@@ -68,10 +68,10 @@ function SettingsPage() {
             </div>
             <div>
               <dt className="text-[11px] uppercase tracking-wider text-muted-foreground">
-                VITE_API_BASE_URL
+                API connection
               </dt>
               <dd className="tabular break-all text-sm text-foreground">
-                {API_BASE_URL}
+                {API_BASE_URL ? "Development API" : "Same-origin API"}
               </dd>
             </div>
             <div>

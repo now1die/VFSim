@@ -1,62 +1,133 @@
+from contextlib import ExitStack, asynccontextmanager
 from datetime import datetime, timezone
 from functools import lru_cache
+import logging
 import os
+import sqlite3
 import torch
 from pathlib import Path
+from tempfile import TemporaryDirectory
 from typing import Any, Dict, List, Optional
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel, Field
 
+from sessions import SessionStore, session_vfs
 from vfs.filesystem import VirtualFileSystem
+
+
+logger = logging.getLogger(__name__)
+CHECKPOINT_PATH = Path(__file__).resolve().parent / "artifacts" / "riskgnn.pt"
+vfs = VirtualFileSystem(checkpoint_path=os.environ.get("VFSIM_CHECKPOINT_PATH"))
+production = os.environ.get("VFSIM_ENV") == "production"
+
+
+def current_vfs() -> VirtualFileSystem:
+    return session_vfs.get() or vfs
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    proxy_token = os.environ.get("VFSIM_PROXY_TOKEN")
+    if production and not proxy_token:
+        raise RuntimeError("VFSIM_PROXY_TOKEN is required for hosted sessions")
+
+    with ExitStack() as resources:
+        app.state.sessions = None
+        if proxy_token:
+            directory = resources.enter_context(TemporaryDirectory(prefix="vfsim-"))
+            app.state.sessions = SessionStore(Path(directory) / "sessions.sqlite3", proxy_token)
+            app.state.sessions.initialize()
+        try:
+            if _trained_model() is None:
+                raise RuntimeError("The main GNN checkpoint is missing or incompatible")
+            from challenging.trace import V09_SEEDS, _checkpoint_files, model_and_metadata
+            for version in ("v07", "v08", *(f"v09_s{seed}" for seed in V09_SEEDS)):
+                model_and_metadata(version)
+                if not _checkpoint_files(version)[1].is_file():
+                    raise RuntimeError(f"FaultLab examples are missing for {version}")
+            for artifact in (
+                "baseline_metrics.json", "hardmode_metrics.json", "readout_comparison.json",
+                "hardmode_audit_v07.json", "hardmode_audit.json",
+                "independent_v09/external_multiseed_results.json",
+            ):
+                if not (CHECKPOINT_PATH.parent / artifact).is_file():
+                    raise RuntimeError("A required VFSim research artifact is missing")
+        except Exception:
+            logger.exception("VFSim model or research artifacts unavailable")
+            if production:
+                raise
+            app.state.models_ready = False
+        else:
+            app.state.models_ready = True
+        try:
+            yield
+        finally:
+            app.state.sessions = None
+            del app.state.models_ready
 
 
 app = FastAPI(
     title="VFSim Backend",
     description="Backend API for the VFSim risk-aware filesystem simulator",
     version="0.9.0",
+    lifespan=lifespan,
+    docs_url=None if production else "/docs",
+    redoc_url=None if production else "/redoc",
+    openapi_url=None if production else "/openapi.json",
 )
 
-vfs = VirtualFileSystem(checkpoint_path=os.environ.get("VFSIM_CHECKPOINT_PATH"))
 
-# A trained checkpoint is created by training/train.py.
-CHECKPOINT_PATH = Path(__file__).resolve().parent / "artifacts" / "riskgnn.pt"
+@app.middleware("http")
+async def scope_api(request: Request, call_next):
+    store = getattr(request.app.state, "sessions", None)
+    if request.url.path.startswith("/api/") and request.method != "OPTIONS":
+        if store is not None:
+            return await store.handle(request, call_next)
+        if production:
+            return JSONResponse(
+                {"detail": "Simulator storage is unavailable."},
+                status_code=503,
+                headers={"cache-control": "no-store"},
+            )
+    return await call_next(request)
 
 
 class CreateRequest(BaseModel):
-    path: str
-    inode_type: str = "file"
+    path: str = Field(max_length=512)
+    inode_type: str = Field(default="file", max_length=16)
 
 
 class WriteRequest(BaseModel):
-    path: str
-    size: int
+    path: str = Field(max_length=512)
+    size: int = Field(le=2**53 - 1)
 
 
 class PairRequest(BaseModel):
-    first: str
-    second: str
-    kind: str = "size_equal"
+    first: str = Field(max_length=512)
+    second: str = Field(max_length=512)
+    kind: str = Field(default="size_equal", max_length=64)
 
 
 class LinkRequest(BaseModel):
-    existing_path: str
-    new_path: str
+    existing_path: str = Field(max_length=512)
+    new_path: str = Field(max_length=512)
 
 
 class RenameRequest(BaseModel):
-    old_path: str
-    new_path: str
+    old_path: str = Field(max_length=512)
+    new_path: str = Field(max_length=512)
 
 
 class UnlinkRequest(BaseModel):
-    path: str
+    path: str = Field(max_length=512)
 
 
 class OpenRequest(BaseModel):
-    path: str
-    mode: str = "r"
+    path: str = Field(max_length=512)
+    mode: str = Field(default="r", max_length=8)
 
 
 class CloseRequest(BaseModel):
@@ -64,20 +135,25 @@ class CloseRequest(BaseModel):
 
 
 class SyncRequest(BaseModel):
-    path: str = "/"
+    path: str = Field(default="/", max_length=512)
 
 
 class CrashRequest(BaseModel):
-    transactionId: str
-    scenarioId: str
+    transactionId: str = Field(max_length=64)
+    scenarioId: str = Field(max_length=64)
 
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        origin.strip() for origin in os.environ.get(
+            "VFSIM_CORS_ORIGINS",
+            "" if production else "http://127.0.0.1:3000,http://localhost:3000",
+        ).split(",") if origin.strip() and origin.strip() != "*"
+    ],
     allow_credentials=False,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "DELETE"],
+    allow_headers=["Content-Type"],
 )
 
 
@@ -142,7 +218,7 @@ def _frontend_transaction(tx) -> Dict[str, Any]:
 
 
 def _find_transaction(transaction_id: str):
-    tx = vfs.transaction_log.get_by_id(transaction_id)
+    tx = current_vfs().transaction_log.get_by_id(transaction_id)
     if tx is None:
         raise HTTPException(status_code=404, detail="Transaction not found")
     return tx
@@ -171,10 +247,10 @@ def _score_transaction(tx):
         return result
     from graph.builder import build_graph
     from graph.subgraph import get_touched_inode_indices, extract_2hop_subgraph, get_subgraph_touched_inode_indices
-    idx = next((i+1 for i, t in enumerate(vfs.get_transactions()) if t.txn_id == tx.txn_id), None)
+    idx = next((i+1 for i, t in enumerate(current_vfs().get_transactions()) if t.txn_id == tx.txn_id), None)
     if idx is None:
         return result
-    replay = vfs.replay_at(idx)
+    replay = current_vfs().replay_at(idx)
     touched = get_touched_inode_indices(replay, tx)
     if not touched:
         return result
@@ -187,15 +263,15 @@ def _score_transaction(tx):
 
 
 def _graph_payload(transaction_id: Optional[str] = None) -> Dict[str, Any]:
-    inodes = vfs.get_all_inodes()
-    dirents = vfs.get_all_dirents()
+    inodes = current_vfs().get_all_inodes()
+    dirents = current_vfs().get_all_dirents()
 
     nodes: List[Dict[str, Any]] = []
     edges: List[Dict[str, Any]] = []
 
     inode_ids = {inode.inode_id: f"inode-{inode.inode_id}" for inode in inodes}
     latest_touch = {}
-    for tx in vfs.get_transactions():
+    for tx in current_vfs().get_transactions():
         for inode_id in tx.inodes_touched:
             latest_touch[inode_id] = tx.timestamp
 
@@ -217,7 +293,7 @@ def _graph_payload(transaction_id: Optional[str] = None) -> Dict[str, Any]:
             }
         )
 
-    dirent_lookup = {id(entry): path for path, entry in vfs.dirents.items()}
+    dirent_lookup = {id(entry): path for path, entry in current_vfs().dirents.items()}
     dirent_node_by_path = {}
     for i, dirent in enumerate(dirents):
         dirent_id = f"dirent-{i}"
@@ -266,7 +342,7 @@ def _graph_payload(transaction_id: Optional[str] = None) -> Dict[str, Any]:
     # the same inode. This is only a visualization; the real heterogeneous
     # graph remains in backend/graph/builder.py.
     paths_by_inode: Dict[int, List[str]] = {}
-    for path, dirent in vfs.dirents.items():
+    for path, dirent in current_vfs().dirents.items():
         paths_by_inode.setdefault(dirent.inode_id, []).append(path)
 
     for inode_id, paths in paths_by_inode.items():
@@ -315,15 +391,42 @@ def root():
     }
 
 
+@app.get("/health")
+def liveness():
+    return {"status": "ok"}
+
+
+@app.get("/ready")
 @app.get("/api/health")
-def health():
+def health(response: Response):
+    models_ready = getattr(app.state, "models_ready", None)
+    if models_ready is None:
+        models_ready = not production and _model_loaded()
+    store = getattr(app.state, "sessions", None)
+    storage_ready = not production or store is not None
+    try:
+        if store:
+            storage_ready = store.ready()
+    except (OSError, sqlite3.Error):
+        logger.exception("VFSim readiness storage check failed")
+        storage_ready = False
+    ready = models_ready and storage_ready
+    if not ready:
+        response.status_code = 503
+    response.headers["cache-control"] = "no-store"
     return {
-        "status": "ok",
+        "status": "ok" if ready else "unavailable",
         "mode": "live",
         "version": app.version,
-        "gnn": "loaded" if _model_loaded() else "not_loaded",
+        "gnn": "loaded" if models_ready else "not_loaded",
+        "storage": "temporary" if store and storage_ready else "local" if storage_ready else "unavailable",
         "checkedAt": datetime.now(timezone.utc).isoformat(),
     }
+
+
+@app.post("/api/session", status_code=204)
+def local_session():
+    return Response(status_code=204, headers={"cache-control": "no-store"})
 
 
 @app.get("/api/status")
@@ -337,14 +440,14 @@ def status():
 
 @app.get("/api/stats")
 def stats():
-    inodes = vfs.get_all_inodes()
-    dirents = vfs.get_all_dirents()
+    inodes = current_vfs().get_all_inodes()
+    dirents = current_vfs().get_all_dirents()
 
     # The count is based on the actual VFS relationships, without requiring
     # PyG just to render the dashboard.
     edge_count = len(_graph_payload()["edges"])
     dirty_nodes = sum(1 for inode in inodes if inode.dirty)
-    assessments = [_score_transaction(tx)["score"] for tx in vfs.get_transactions()[-20:]] if _model_loaded() else []
+    assessments = [_score_transaction(tx)["score"] for tx in current_vfs().get_transactions()[-20:]] if _model_loaded() else []
     valid_scores = [score for score in assessments if score is not None]
 
     return {
@@ -353,7 +456,7 @@ def stats():
         "dirtyNodes": dirty_nodes,
         "openTransactions": 0,
         "meanRisk": round(sum(valid_scores) / len(valid_scores), 4) if valid_scores else None,
-        "journalUtilization": round((len(vfs.get_transactions()) - vfs._durable_index) / max(1, len(vfs.get_transactions())), 3),
+        "journalUtilization": round((len(current_vfs().get_transactions()) - current_vfs()._durable_index) / max(1, len(current_vfs().get_transactions())), 3),
         "simulatedUptimeHrs": None,
         "crashesSurvived": 0,
     }
@@ -361,7 +464,7 @@ def stats():
 
 @app.get("/api/transactions")
 def get_transactions():
-    return [_frontend_transaction(tx) for tx in reversed(vfs.get_transactions())]
+    return [_frontend_transaction(tx) for tx in reversed(current_vfs().get_transactions())]
 
 
 @app.get("/api/transactions/{transaction_id}")
@@ -392,7 +495,7 @@ def get_vfs():
                 "size": inode.size,
                 "dirty": inode.dirty,
             }
-            for inode in vfs.get_all_inodes()
+            for inode in current_vfs().get_all_inodes()
         ]
     }
 
@@ -400,7 +503,7 @@ def get_vfs():
 @app.post("/api/vfs/create")
 def create_file(request: CreateRequest):
     try:
-        tx = vfs.create(request.path, request.inode_type)
+        tx = current_vfs().create(request.path, request.inode_type)
         return _frontend_transaction(tx)
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc))
@@ -409,7 +512,7 @@ def create_file(request: CreateRequest):
 @app.post("/api/vfs/write")
 def write_file(request: WriteRequest):
     try:
-        tx = vfs.write(request.path, request.size)
+        tx = current_vfs().write(request.path, request.size)
         return _frontend_transaction(tx)
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc))
@@ -418,7 +521,7 @@ def write_file(request: WriteRequest):
 @app.post("/api/vfs/link")
 def link_file(request: LinkRequest):
     try:
-        tx = vfs.link(request.existing_path, request.new_path)
+        tx = current_vfs().link(request.existing_path, request.new_path)
         return _frontend_transaction(tx)
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc))
@@ -427,7 +530,7 @@ def link_file(request: LinkRequest):
 @app.post("/api/vfs/pair")
 def declare_application_pair(request: PairRequest):
     try:
-        return {"pair": vfs.declare_pair(request.first, request.second, request.kind),
+        return {"pair": current_vfs().declare_pair(request.first, request.second, request.kind),
                 "note": "Declared application dependency, not a filesystem operation"}
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc))
@@ -436,7 +539,7 @@ def declare_application_pair(request: PairRequest):
 @app.post("/api/vfs/rename")
 def rename_file(request: RenameRequest):
     try:
-        tx = vfs.rename(request.old_path, request.new_path)
+        tx = current_vfs().rename(request.old_path, request.new_path)
         return _frontend_transaction(tx)
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc))
@@ -445,7 +548,7 @@ def rename_file(request: RenameRequest):
 @app.delete("/api/vfs/unlink")
 def unlink_file(request: UnlinkRequest):
     try:
-        tx = vfs.unlink(request.path)
+        tx = current_vfs().unlink(request.path)
         return _frontend_transaction(tx)
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc))
@@ -454,7 +557,7 @@ def unlink_file(request: UnlinkRequest):
 @app.post("/api/vfs/open")
 def open_file(request: OpenRequest):
     try:
-        tx = vfs.open(request.path, request.mode)
+        tx = current_vfs().open(request.path, request.mode)
         return _frontend_transaction(tx)
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc))
@@ -463,7 +566,7 @@ def open_file(request: OpenRequest):
 @app.post("/api/vfs/close")
 def close_file(request: CloseRequest):
     try:
-        tx = vfs.close(request.fd)
+        tx = current_vfs().close(request.fd)
         return _frontend_transaction(tx)
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc))
@@ -474,7 +577,7 @@ def risk_history():
     # These are model predictions, not experimentally observed physical crashes.
     return [
         {"t": tx.timestamp, "predicted": score["score"], "observed": None, "writeAmp": None}
-        for tx in vfs.get_transactions()
+        for tx in current_vfs().get_transactions()
         if (score := _score_transaction(tx))["score"] is not None
     ]
 
@@ -542,7 +645,7 @@ def crash_scenarios():
 def simulate_crash(request: CrashRequest):
     _find_transaction(request.transactionId)
     try:
-        return vfs.crash_preview(request.transactionId, request.scenarioId)
+        return current_vfs().crash_preview(request.transactionId, request.scenarioId)
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
@@ -550,7 +653,7 @@ def simulate_crash(request: CrashRequest):
 @app.post("/api/vfs/fsync")
 def sync_file(request: SyncRequest):
     try:
-        return _frontend_transaction(vfs.fsync(request.path))
+        return _frontend_transaction(current_vfs().fsync(request.path))
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
@@ -561,7 +664,7 @@ def research_gnn(transaction_id: Optional[str] = None, scope: str = "scoring"):
     """Real typed graph, layer embeddings, and normalized inference attention."""
     from research import inspection_payload
     try:
-        return inspection_payload(vfs, _trained_model(), transaction_id, scope)
+        return inspection_payload(current_vfs(), _trained_model(), transaction_id, scope)
     except ValueError as exc:
         raise HTTPException(status_code=400 if "scope" in str(exc) else 404, detail=str(exc)) from exc
 
@@ -570,7 +673,7 @@ def research_gnn(transaction_id: Optional[str] = None, scope: str = "scoring"):
 def research_transaction(transaction_id: str):
     from research import transaction_analysis
     try:
-        return transaction_analysis(vfs, _trained_model(), transaction_id)
+        return transaction_analysis(current_vfs(), _trained_model(), transaction_id)
     except ValueError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
 
@@ -588,7 +691,7 @@ def prioritize_recorded_transactions(limit: int = 12):
     if _trained_model() is None:
         raise HTTPException(status_code=503, detail='No compatible model checkpoint')
     candidates = []
-    for position, tx in enumerate(vfs.get_transactions(), 1):
+    for position, tx in enumerate(current_vfs().get_transactions(), 1):
         score = _score_transaction(tx)['score']
         if score is not None:
             candidates.append({'transactionId': tx.txn_id, 'sequence': position,

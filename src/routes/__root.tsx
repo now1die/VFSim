@@ -85,9 +85,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "VFSim — Filesystem Research Simulator" },
-      { name: "description", content: "Interactive graph-based filesystem simulation, GNN attention inspection, transaction risk analysis, and crash-recovery research." },
+      {
+        name: "description",
+        content:
+          "Interactive graph-based filesystem simulation, GNN attention inspection, transaction risk analysis, and crash-recovery research.",
+      },
       { property: "og:title", content: "VFSim — Filesystem Research Simulator" },
-      { property: "og:description", content: "Interactive filesystem graphs, transaction risk analysis, model attention, and simulated crash recovery." },
+      {
+        property: "og:description",
+        content:
+          "Interactive filesystem graphs, transaction risk analysis, model attention, and simulated crash recovery.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -124,7 +132,17 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ClientOnly>
+      <ClientOnly
+        fallback={
+          <main className="mx-auto max-w-xl p-8 text-foreground">
+            <h1 className="text-3xl font-bold">VFSim</h1>
+            <p role="status" className="mt-3">
+              Loading the filesystem simulator…
+            </p>
+            <noscript>Enable JavaScript to use VFSim.</noscript>
+          </main>
+        }
+      >
         <SelectionProvider>
           <AppShell>
             <Outlet />
