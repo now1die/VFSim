@@ -20,11 +20,12 @@ def smoke(browser, origin, offline):
         url = f"{origin}/"
         assert page.goto(url, wait_until="domcontentloaded").ok
         expect(page.get_by_role("heading", name="VFSim", exact=True)).to_be_visible(timeout=25_000)
+        expect(page.get_by_text(re.compile("sessions are temporary"))).to_be_visible()
         if offline:
-            expect(page.get_by_role("status").filter(has_text="Backend offline")).to_be_visible(timeout=35_000)
+            expect(page.get_by_role("status").filter(has_text="Backend offline")).to_be_visible(timeout=90_000)
             retry = page.get_by_role("button", name="Retry request").first
             expect(retry).to_be_visible()
-            with page.expect_response(lambda response: response.url.endswith("/api/session")) as retried:
+            with page.expect_response(lambda response: response.url.endswith("/api/health"), timeout=90_000) as retried:
                 retry.click()
             assert retried.value.status >= 500
             assert all("/api/" in url for url in bad_responses), bad_responses
@@ -32,7 +33,7 @@ def smoke(browser, origin, offline):
             print("PASS: offline dashboard, status, and retry controls")
             return
 
-        expect(page.get_by_text(re.compile("Backend live", re.I))).to_be_visible(timeout=25_000)
+        expect(page.get_by_text(re.compile("Backend live", re.I))).to_be_visible(timeout=90_000)
         for route in ROUTES:
             assert page.goto(origin + route, wait_until="domcontentloaded").ok, route
             expect(page.locator("main.app-content")).to_be_visible(timeout=25_000)
@@ -82,7 +83,7 @@ def smoke(browser, origin, offline):
         assert faultlab["nodes"] and faultlab["edges"]
         assert api_call("/api/research/hardmode/trace?family=package_upgrade&version=v09_s11")["nodes"]
         ready = api_call("/api/health")
-        assert ready["gnn"] == "loaded" and ready["storage"] == "durable"
+        assert ready["gnn"] == "loaded" and ready["storage"] == "temporary"
 
         # A fresh browser must see a different namespace and transaction log.
         with browser.new_context() as other:

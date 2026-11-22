@@ -32,7 +32,7 @@ npm ci
 npm run dev
 ```
 
-Open [VFSim](http://127.0.0.1:3000). Under **Live virtual filesystem operations**, create `/report.txt`, write 256 bytes to it, then create a hard link. Open **Graph Explorer** to see the file and link, **Transactions** to inspect the recorded operations, or **Risk Analysis** to see their model scores. The default local demo keeps its state in memory. The hosted app saves isolated browser sessions on a persistent disk.
+Open [VFSim](http://127.0.0.1:3000). Under **Live virtual filesystem operations**, create `/report.txt`, write 256 bytes to it, then create a hard link. Open **Graph Explorer** to see the file and link, **Transactions** to inspect the recorded operations, or **Risk Analysis** to see their model scores. The default local demo keeps its state in memory. On Render Free, browser sessions are isolated and reset when the backend sleeps or restarts.
 
 See the [setup guide](docs/SETUP.md) for Windows instructions and single-port hosting. The running backend provides [interactive API documentation](http://127.0.0.1:8000/docs).
 

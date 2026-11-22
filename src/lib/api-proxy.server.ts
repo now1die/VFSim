@@ -1,8 +1,25 @@
 import { isIP } from "node:net";
+import { setTimeout as sleep } from "node:timers/promises";
 
 const maxBodyBytes = 16_384;
 const sessionCookie = /^__Host-vfsim_session=[A-Za-z0-9_-]{43}$/;
 const proxyToken = /^[A-Za-z0-9_-]{32,}$/;
+const healthPath = "/api/health";
+const wakeRetryInterval = 5_000;
+
+async function fetchUpstream(upstream: URL, init: RequestInit, canWakeBackend: boolean) {
+  while (true) {
+    const result = await fetch(upstream, init);
+    const warming =
+      [502, 503, 504].includes(result.status) ||
+      (result.ok && result.headers.get("content-type")?.startsWith("text/html"));
+    if (!canWakeBackend || !warming) return result;
+    // Render may serve a loading page before routing requests to the worker.
+    // Only a health probe is replayed, and all attempts share its deadline.
+    await result.body?.cancel();
+    await sleep(wakeRetryInterval, undefined, { signal: init.signal ?? undefined });
+  }
+}
 
 function failure(status: number, detail: string) {
   return Response.json({ detail }, { status, headers: { "cache-control": "no-store" } });
@@ -61,7 +78,8 @@ export async function proxyApi(request: Request, url: URL) {
     if (address && isIP(address)) headers.set("x-vfsim-client-ip", address);
   }
 
-  const timeout = AbortSignal.timeout(25_000);
+  const canWakeBackend = request.method === "GET" && url.pathname === healthPath;
+  const timeout = AbortSignal.timeout(canWakeBackend ? 75_000 : 25_000);
   const signal = AbortSignal.any([request.signal, timeout]);
   try {
     let body: Uint8Array<ArrayBuffer> | undefined;
@@ -95,13 +113,17 @@ export async function proxyApi(request: Request, url: URL) {
       }
     }
 
-    const result = await fetch(upstream, {
-      method: request.method,
-      headers,
-      ...(body ? { body } : {}),
-      redirect: "error",
-      signal,
-    });
+    const result = await fetchUpstream(
+      upstream,
+      {
+        method: request.method,
+        headers,
+        ...(body ? { body } : {}),
+        redirect: "error",
+        signal,
+      },
+      canWakeBackend,
+    );
     if (result.status >= 500) {
       await result.body?.cancel();
       return failure(result.status, "The VFSim backend is temporarily unavailable.");
@@ -131,7 +153,12 @@ export async function proxyApi(request: Request, url: URL) {
     return new Response(result.body, { status: result.status, headers: responseHeaders });
   } catch {
     return timeout.aborted
-      ? failure(504, "The VFSim backend took too long to respond.")
+      ? failure(
+          504,
+          canWakeBackend
+            ? "The free backend is still waking up. Try again shortly."
+            : "The VFSim backend took too long to respond.",
+        )
       : failure(502, "The VFSim backend could not be reached.");
   }
 }

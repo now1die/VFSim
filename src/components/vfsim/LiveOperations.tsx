@@ -143,8 +143,8 @@ export function LiveOperations() {
       </form>
       <p className="mt-3 text-xs text-muted-foreground">
         These are real operations in VFSim's in-memory virtual filesystem, not scripted examples or
-        physical-disk writes. Start by creating a file; then select Write, Hard link, or Fsync. The
-        hosted simulator saves your session between visits.
+        physical-disk writes. Start by creating a file; then select Write, Hard link, or Fsync. On
+        Render Free, files and transactions reset when the backend sleeps or restarts.
       </p>
       {notice && (
         <p className="mt-2 break-words text-sm text-foreground" role="status" aria-live="polite">

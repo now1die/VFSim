@@ -1,4 +1,4 @@
-from contextlib import asynccontextmanager
+from contextlib import ExitStack, asynccontextmanager
 from datetime import datetime, timezone
 from functools import lru_cache
 import logging
@@ -6,6 +6,7 @@ import os
 import sqlite3
 import torch
 from pathlib import Path
+from tempfile import TemporaryDirectory
 from typing import Any, Dict, List, Optional
 
 from fastapi import FastAPI, HTTPException, Request, Response
@@ -29,44 +30,43 @@ def current_vfs() -> VirtualFileSystem:
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    database = os.environ.get("VFSIM_SESSION_DB")
     proxy_token = os.environ.get("VFSIM_PROXY_TOKEN")
-    if (production or database or proxy_token) and not (database and proxy_token):
-        raise RuntimeError("Both VFSIM_SESSION_DB and VFSIM_PROXY_TOKEN are required for hosted sessions")
-    if database and proxy_token:
-        path = Path(database)
-        if not path.is_absolute():
-            raise RuntimeError("VFSIM_SESSION_DB must be an absolute path on durable storage")
-        app.state.sessions = SessionStore(path, proxy_token)
-        app.state.sessions.initialize()
+    if production and not proxy_token:
+        raise RuntimeError("VFSIM_PROXY_TOKEN is required for hosted sessions")
 
-    try:
-        if _trained_model() is None:
-            raise RuntimeError("The main GNN checkpoint is missing or incompatible")
-        from challenging.trace import V09_SEEDS, _checkpoint_files, model_and_metadata
-        for version in ("v07", "v08", *(f"v09_s{seed}" for seed in V09_SEEDS)):
-            model_and_metadata(version)
-            if not _checkpoint_files(version)[1].is_file():
-                raise RuntimeError(f"FaultLab examples are missing for {version}")
-        for artifact in (
-            "baseline_metrics.json", "hardmode_metrics.json", "readout_comparison.json",
-            "hardmode_audit_v07.json", "hardmode_audit.json",
-            "independent_v09/external_multiseed_results.json",
-        ):
-            if not (CHECKPOINT_PATH.parent / artifact).is_file():
-                raise RuntimeError("A required VFSim research artifact is missing")
-    except Exception:
-        logger.exception("VFSim model or research artifacts unavailable")
-        if production:
-            raise
-        app.state.models_ready = False
-    else:
-        app.state.models_ready = True
-    try:
-        yield
-    finally:
+    with ExitStack() as resources:
         app.state.sessions = None
-        del app.state.models_ready
+        if proxy_token:
+            directory = resources.enter_context(TemporaryDirectory(prefix="vfsim-"))
+            app.state.sessions = SessionStore(Path(directory) / "sessions.sqlite3", proxy_token)
+            app.state.sessions.initialize()
+        try:
+            if _trained_model() is None:
+                raise RuntimeError("The main GNN checkpoint is missing or incompatible")
+            from challenging.trace import V09_SEEDS, _checkpoint_files, model_and_metadata
+            for version in ("v07", "v08", *(f"v09_s{seed}" for seed in V09_SEEDS)):
+                model_and_metadata(version)
+                if not _checkpoint_files(version)[1].is_file():
+                    raise RuntimeError(f"FaultLab examples are missing for {version}")
+            for artifact in (
+                "baseline_metrics.json", "hardmode_metrics.json", "readout_comparison.json",
+                "hardmode_audit_v07.json", "hardmode_audit.json",
+                "independent_v09/external_multiseed_results.json",
+            ):
+                if not (CHECKPOINT_PATH.parent / artifact).is_file():
+                    raise RuntimeError("A required VFSim research artifact is missing")
+        except Exception:
+            logger.exception("VFSim model or research artifacts unavailable")
+            if production:
+                raise
+            app.state.models_ready = False
+        else:
+            app.state.models_ready = True
+        try:
+            yield
+        finally:
+            app.state.sessions = None
+            del app.state.models_ready
 
 
 app = FastAPI(
@@ -419,7 +419,7 @@ def health(response: Response):
         "mode": "live",
         "version": app.version,
         "gnn": "loaded" if models_ready else "not_loaded",
-        "storage": "durable" if store and storage_ready else "local" if storage_ready else "unavailable",
+        "storage": "temporary" if store and storage_ready else "local" if storage_ready else "unavailable",
         "checkedAt": datetime.now(timezone.utc).isoformat(),
     }
 

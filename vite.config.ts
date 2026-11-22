@@ -18,7 +18,9 @@ export default defineConfig(({ mode }) => ({
       ),
       prerender: { enabled: mode !== "vercel", crawlLinks: true, autoSubfolderIndex: true },
     }),
-    ...(mode === "vercel" ? [nitro({ preset: "vercel" })] : []),
+    ...(mode === "vercel"
+      ? [nitro({ preset: "vercel", vercel: { functions: { maxDuration: 90 } } })]
+      : []),
     react(),
   ],
 }));

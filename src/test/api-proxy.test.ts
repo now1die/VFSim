@@ -1,6 +1,10 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { proxyApi } from "@/lib/api-proxy.server";
 
+vi.mock("node:timers/promises", () => ({
+  setTimeout: vi.fn().mockResolvedValue(undefined),
+}));
+
 const frontend = "https://frontend.example.test";
 const backend = "https://backend.example.test";
 
@@ -86,6 +90,30 @@ describe("hosted API proxy", () => {
     expect(forwarded.get("x-vfsim-client-ip")).toBe("192.0.2.1");
     expect(result.status).toBe(429);
     expect(result.headers.get("retry-after")).toBe("120");
+  });
+
+  it("retries only the health probe during a free-tier warmup", async () => {
+    vi.stubEnv("VFSIM_API_URL", backend);
+    vi.stubEnv("VFSIM_PROXY_TOKEN", "test-token-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+    const loading = () =>
+      new Response("<html>Starting</html>", { headers: { "content-type": "text/html" } });
+    const fetchUpstream = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(loading())
+      .mockResolvedValueOnce(Response.json({ detail: "starting" }, { status: 503 }))
+      .mockResolvedValueOnce(Response.json({ status: "ok" }))
+      .mockResolvedValueOnce(loading());
+    vi.stubGlobal("fetch", fetchUpstream);
+
+    const health = new URL("/api/health", frontend);
+    expect((await proxyApi(new Request(health), health)).status).toBe(200);
+    expect(fetchUpstream).toHaveBeenCalledTimes(3);
+    expect(fetchUpstream.mock.calls[0]?.[1]?.signal).toBe(fetchUpstream.mock.calls[2]?.[1]?.signal);
+
+    const session = new URL("/api/session", frontend);
+    const mutation = new Request(session, { method: "POST", headers: { origin: frontend } });
+    expect((await proxyApi(mutation, session)).status).toBe(502);
+    expect(fetchUpstream).toHaveBeenCalledTimes(4);
   });
 
   it("requires an HTTPS upstream in Vercel", async () => {

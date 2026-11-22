@@ -1,4 +1,4 @@
-"""Request-scoped simulator state on a single Render worker and persistent disk."""
+"""Request-scoped simulator state on one worker, stored in a private temporary directory."""
 from __future__ import annotations
 
 import asyncio
@@ -25,7 +25,7 @@ from vfs.transaction import Transaction
 
 SESSION_COOKIE = "__Host-vfsim_session"
 MAX_AGE = 7 * 24 * 60 * 60
-MAX_SESSIONS = 256
+MAX_SESSIONS = 64
 MAX_SESSIONS_PER_CLIENT = 12
 MAX_OPERATIONS = 150
 MAX_STATE_BYTES = 2 * 1024 * 1024
@@ -64,8 +64,9 @@ class SessionStore:
             raise ValueError("VFSIM_PROXY_TOKEN must contain at least 32 URL-safe characters")
         self.database = database
         self.proxy_token = proxy_token
-        # One worker, bounded lock storage, deterministic stripe per session.
-        self.locks = [asyncio.Lock() for _ in range(32)]
+        # Serialize hosted simulation requests. This bounds simultaneous history
+        # deserialization and model inference on the 512 MiB worker.
+        self.simulation_slot = asyncio.Lock()
 
     def connect(self) -> sqlite3.Connection:
         connection = sqlite3.connect(self.database, timeout=5)
@@ -73,8 +74,6 @@ class SessionStore:
         return connection
 
     def initialize(self) -> None:
-        # Require the configured storage directory to exist. Do not silently
-        # create the mount itself on an ephemeral disk.
         with closing(self.connect()) as db, db:
             if db.execute("PRAGMA journal_mode=WAL").fetchone()[0] != "wal":
                 raise sqlite3.OperationalError("Session storage requires WAL support")
@@ -83,12 +82,9 @@ class SessionStore:
                     id TEXT PRIMARY KEY,
                     expires INTEGER NOT NULL,
                     state TEXT NOT NULL,
-                    client_key TEXT
+                    client_key TEXT NOT NULL
                 )
             """)
-            columns = {row[1] for row in db.execute("PRAGMA table_info(sessions)")}
-            if "client_key" not in columns:
-                db.execute("ALTER TABLE sessions ADD COLUMN client_key TEXT")
 
     def ready(self) -> bool:
         with closing(sqlite3.connect(f"{self.database.as_uri()}?mode=rw", uri=True, timeout=2)) as db:
@@ -174,10 +170,10 @@ class SessionStore:
             if not session_id:
                 return _error(401, "Start a simulator session first.")
 
-            async with self.locks[hash(session_id) % len(self.locks)]:
+            async with self.simulation_slot:
                 vfs = await run_in_threadpool(self.load, session_id)
                 if vfs is None:
-                    return _error(401, "The simulator session expired.")
+                    return _error(401, "The temporary session expired or the backend restarted.")
                 mutation = request.url.path.startswith("/api/vfs/") and request.method in {"POST", "DELETE"}
                 if mutation and len(vfs.get_transactions()) >= MAX_OPERATIONS:
                     return _error(409, "This session reached its operation limit. Use a new browser session to continue.")

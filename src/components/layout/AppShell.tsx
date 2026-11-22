@@ -48,10 +48,20 @@ export function AppShell({ children }: { children: ReactNode }) {
           <div className="header-transaction header-pixel-frame">
             <TransactionPicker />
           </div>
-          <div className="header-status-frame header-pixel-frame"><BackendStatusBadge /></div>
+          <div className="header-status-frame header-pixel-frame">
+            <BackendStatusBadge />
+          </div>
         </div>
       </header>
-      <main className="app-content">{children}</main>
+      <main className="app-content">
+        {import.meta.env.PROD && (
+          <p className="mb-4 border-2 border-border bg-card px-3 py-2 text-sm text-foreground">
+            On Render Free, sessions are temporary. Files and transactions reset when the backend
+            sleeps or restarts. Waking it can take about a minute.
+          </p>
+        )}
+        {children}
+      </main>
       <footer className="app-footer">
         VFSim · Filesystem simulation and model processing remain on the research service.
       </footer>

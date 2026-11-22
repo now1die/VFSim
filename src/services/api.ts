@@ -41,18 +41,22 @@ export class ApiError extends Error {
   }
 }
 
-async function fetchApi(path: string, init?: RequestInit) {
-  const timeout = AbortSignal.timeout(30_000);
+let lastBackendContact = 0;
+
+async function fetchApi(path: string, init?: RequestInit, timeoutMs = 30_000) {
+  const timeout = AbortSignal.timeout(timeoutMs);
   const headers = new Headers(init?.headers);
   headers.set("accept", "application/json");
   if (init?.body) headers.set("content-type", "application/json");
   try {
-    return await fetch(`${API_BASE_URL}${path}`, {
+    const response = await fetch(`${API_BASE_URL}${path}`, {
       ...init,
       headers,
       credentials: "same-origin",
       signal: init?.signal ? AbortSignal.any([init.signal, timeout]) : timeout,
     });
+    if (response.ok) lastBackendContact = Date.now();
+    return response;
   } catch (error) {
     if (init?.signal?.aborted) throw error;
     throw new ApiError(
@@ -73,6 +77,28 @@ async function responseError(response: Response) {
     /* Non-JSON errors can come from the hosting platform. */
   }
   return new ApiError(detail, response.status);
+}
+
+interface BackendHealth {
+  status: string;
+  mode: string;
+  version: string;
+  checkedAt: string;
+  storage: "temporary" | "local" | "unavailable";
+}
+
+let healthProbe: Promise<BackendHealth> | undefined;
+
+function getHealth() {
+  healthProbe ??= fetchApi(ENDPOINTS.health, undefined, API_BASE_URL === "" ? 85_000 : 30_000)
+    .then(async (response) => {
+      if (!response.ok) throw await responseError(response);
+      return (await response.json()) as BackendHealth;
+    })
+    .finally(() => {
+      healthProbe = undefined;
+    });
+  return healthProbe;
 }
 
 async function bootstrapSession() {
@@ -97,6 +123,9 @@ function establishSession() {
 
 export async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const needsSession = path !== ENDPOINTS.health && API_BASE_URL === "";
+  // An active tab can go idle while Render sleeps. Wake it with a read
+  // before sending a write, then let the API decide if the session survived.
+  if (needsSession && Date.now() - lastBackendContact > 10 * 60_000) await getHealth();
   const requestSession = needsSession ? establishSession() : undefined;
   await requestSession;
   const mutation = Boolean(init?.method && init.method !== "GET");
@@ -114,7 +143,7 @@ export async function request<T>(path: string, init?: RequestInit): Promise<T> {
     if (session === requestSession) session = undefined;
     if (mutation) {
       throw new ApiError(
-        "The simulator session expired. Retry the operation to start a new session.",
+        "The temporary session expired or the backend restarted. Retry the operation to start a new session.",
         401,
       );
     }
@@ -193,8 +222,7 @@ export const api = {
     request("/api/vfs/unlink", { method: "DELETE", body: JSON.stringify({ path }) }),
   syncFile: (path: string): Promise<Transaction> =>
     request("/api/vfs/fsync", { method: "POST", body: JSON.stringify({ path }) }),
-  getHealth: (): Promise<{ status: string; mode: string; version: string; checkedAt: string }> =>
-    request(ENDPOINTS.health),
+  getHealth,
   getStats: (): Promise<SystemStats> => request(ENDPOINTS.stats),
   getGraph: (transactionId?: string): Promise<GraphPayload> =>
     request(transactionId ? ENDPOINTS.transactionGraph(transactionId) : ENDPOINTS.graph),

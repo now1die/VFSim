@@ -8,7 +8,7 @@ export function BackendStatusBadge({ className }: { className?: string }) {
   const { data, isError, isPending } = useQuery({
     queryKey: ["health"],
     queryFn: () => api.getHealth(),
-    refetchInterval: 30_000,
+    staleTime: 60_000,
   });
 
   const Icon = Radio;
@@ -27,7 +27,11 @@ export function BackendStatusBadge({ className }: { className?: string }) {
       role="status"
     >
       <Icon className="size-3.5" aria-hidden />
-      {isError ? "Backend offline" : isPending ? "Connecting…" : "Backend live"}
+      {isError
+        ? "Backend offline"
+        : isPending
+          ? "Connecting… (up to a minute on Free)"
+          : "Backend live"}
       <span className="hidden font-normal normal-case tracking-normal text-muted-foreground sm:inline">
         {isError ? "Unavailable" : (data?.version ?? "connecting…")}
       </span>
