@@ -16,7 +16,7 @@ The project is a **research prototype**. The GNN's risk scores are model predict
 
 ## Run the demo locally
 
-Use Python 3.10+ and Node.js 22.12+ or 24+. From the repository root, install dependencies and start the FastAPI backend in one terminal.
+Use Python 3.12 and Node.js 24. From the repository root, install dependencies and start the FastAPI backend in one terminal.
 
 ```bash
 python -m pip install -r backend/requirements.txt
@@ -32,7 +32,7 @@ npm ci
 npm run dev
 ```
 
-Open [VFSim](http://127.0.0.1:3000). Under **Live virtual filesystem operations**, create `/report.txt`, write 256 bytes to it, then create a hard link. Open **Graph Explorer** to see the file and link, **Transactions** to inspect the recorded operations, or **Risk Analysis** to see their model scores. State is held in memory and resets when you restart the backend.
+Open [VFSim](http://127.0.0.1:3000). Under **Live virtual filesystem operations**, create `/report.txt`, write 256 bytes to it, then create a hard link. Open **Graph Explorer** to see the file and link, **Transactions** to inspect the recorded operations, or **Risk Analysis** to see their model scores. The default local demo keeps its state in memory. The hosted app saves isolated browser sessions on a persistent disk.
 
 See the [setup guide](docs/SETUP.md) for Windows instructions and single-port hosting. The running backend provides [interactive API documentation](http://127.0.0.1:8000/docs).
 
@@ -41,6 +41,10 @@ See the [setup guide](docs/SETUP.md) for Windows instructions and single-port ho
 ![VFSim desktop Overview with the clickable skyline and live filesystem graph](docs/screenshots/overview-desktop.png)
 
 [Filesystem graph](docs/screenshots/filesystem-desktop.png) · [Mobile Overview](docs/screenshots/overview-mobile.png) · [Mobile filesystem graph](docs/screenshots/filesystem-mobile.png) · [Full gallery](docs/SCREENSHOTS.md)
+
+## Deployment
+
+See the [Vercel and Render deployment guide](docs/DEPLOYMENT.md) for configuration, environment variables, and a browser smoke test.
 
 ## Architecture
 

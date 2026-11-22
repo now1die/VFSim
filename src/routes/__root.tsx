@@ -124,7 +124,17 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ClientOnly>
+      <ClientOnly
+        fallback={
+          <main className="mx-auto max-w-xl p-8 text-foreground">
+            <h1 className="text-3xl font-bold">VFSim</h1>
+            <p role="status" className="mt-3">
+              Loading the filesystem simulator…
+            </p>
+            <noscript>Enable JavaScript to use VFSim.</noscript>
+          </main>
+        }
+      >
         <SelectionProvider>
           <AppShell>
             <Outlet />

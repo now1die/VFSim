@@ -1,0 +1,32 @@
+services:
+  - type: web
+    name: vfsim-api
+    runtime: python
+    plan: standard
+    rootDir: backend
+    buildCommand: >-
+      python -m pip install --upgrade pip==26.3 setuptools==84.1.0 &&
+      python -m pip install --index-url https://download.pytorch.org/whl/cpu torch==2.15.0+cpu &&
+      python -m pip install -r requirements-production.txt &&
+      python -m pip check
+    startCommand: python -m uvicorn main:app --host 0.0.0.0 --port "$PORT" --workers 1 --limit-concurrency 32
+    healthCheckPath: /ready
+    disk:
+      name: simulator-sessions
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.14
+      - key: VFSIM_ENV
+        value: production
+      - key: VFSIM_SESSION_DB
+        value: /var/data/vfsim.sqlite3
+      - key: VFSIM_PROXY_TOKEN
+        sync: false
+      - key: VFSIM_CORS_ORIGINS
+        sync: false
+      - key: OMP_NUM_THREADS
+        value: "1"
+      - key: MKL_NUM_THREADS
+        value: "1"

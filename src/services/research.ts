@@ -1,7 +1,7 @@
 /** VFSim v1.0 typed access to original v0.9 research endpoints.
  * No client-side fabricated scores, oracle outcomes, or model attention values.
  */
-import { API_BASE_URL } from "@/services/api";
+import { request as read } from "@/services/api";
 
 export type EmbeddingStages = Record<string, number[]>;
 export interface GnnNode {
@@ -78,19 +78,6 @@ export interface HardmodeReport {
   examples: unknown;
   boundary: string;
   warning: string;
-}
-
-async function read<T>(path: string, signal?: AbortSignal): Promise<T> {
-  const response = await fetch(`${API_BASE_URL.replace(/\/$/, "")}${path}`, {
-    ...(signal ? { signal } : {}),
-    headers: { Accept: "application/json" },
-  });
-  if (!response.ok) {
-    let errorText = `${response.status} ${response.statusText}`;
-    try { const data = await response.json() as {detail?:string}; errorText = data.detail ?? errorText; } catch { /* generic server error */ }
-    throw new Error(errorText);
-  }
-  return await response.json() as T;
 }
 
 export const researchApi = {

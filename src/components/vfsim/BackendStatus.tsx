@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Radio } from "lucide-react";
 
-import { API_BASE_URL, api } from "@/services/api";
+import { api } from "@/services/api";
 import { cn } from "@/lib/utils";
 
 export function BackendStatusBadge({ className }: { className?: string }) {
@@ -24,7 +24,7 @@ export function BackendStatusBadge({ className }: { className?: string }) {
             : "border-live/50 bg-live/15 text-live",
         className,
       )}
-      title={`Backend: ${API_BASE_URL}`}
+      role="status"
     >
       <Icon className="size-3.5" aria-hidden />
         {isError ? "Backend offline" : isPending ? "Connecting…" : "Backend live"}
