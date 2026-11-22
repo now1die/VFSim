@@ -61,18 +61,18 @@ npm run build
 
 ## Project structure
 
-| Directory or file | Purpose |
-| --- | --- |
-| `src/routes`, `src/components`, `src/styles.css` | React UI and pixel-art styles |
-| `src/services` | API clients and data types |
-| `backend/main.py`, `backend/vfs` | FastAPI and virtual filesystem |
-| `backend/gnn`, `backend/graph` | Graph construction and model inference |
-| `backend/challenging` | FaultLab generation, recovery simulation and evaluation |
-| `backend/artifacts` | Model checkpoints, evaluation outputs and recorded metrics |
-| `backend/training` | Synthetic training and baseline evaluation tools |
-| `backend/legacy_pyg` | **Optional** archived architecture; not imported by the live app |
-| `backend/tests`, `src/test` | Backend and frontend regression tests |
-| `docs` | Setup, architecture and research documentation |
+| Directory or file                                | Purpose                                                          |
+| ------------------------------------------------ | ---------------------------------------------------------------- |
+| `src/routes`, `src/components`, `src/styles.css` | React UI and pixel-art styles                                    |
+| `src/services`                                   | API clients and data types                                       |
+| `backend/main.py`, `backend/vfs`                 | FastAPI and virtual filesystem                                   |
+| `backend/gnn`, `backend/graph`                   | Graph construction and model inference                           |
+| `backend/challenging`                            | FaultLab generation, recovery simulation and evaluation          |
+| `backend/artifacts`                              | Model checkpoints, evaluation outputs and recorded metrics       |
+| `backend/training`                               | Synthetic training and baseline evaluation tools                 |
+| `backend/legacy_pyg`                             | **Optional** archived architecture; not imported by the live app |
+| `backend/tests`, `src/test`                      | Backend and frontend regression tests                            |
+| `docs`                                           | Setup, architecture and research documentation                   |
 
 ## Research limitations
 

@@ -10,6 +10,7 @@ from typing import Any, Dict, List, Optional
 
 from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
 from sessions import SessionStore, session_vfs
@@ -36,7 +37,7 @@ async def lifespan(app: FastAPI):
         path = Path(database)
         if not path.is_absolute():
             raise RuntimeError("VFSIM_SESSION_DB must be an absolute path on durable storage")
-        app.state.sessions = SessionStore(path, proxy_token, secure_cookie=production)
+        app.state.sessions = SessionStore(path, proxy_token)
         app.state.sessions.initialize()
 
     try:
@@ -82,8 +83,15 @@ app = FastAPI(
 @app.middleware("http")
 async def scope_api(request: Request, call_next):
     store = getattr(request.app.state, "sessions", None)
-    if store and request.url.path.startswith("/api/") and request.method != "OPTIONS":
-        return await store.handle(request, call_next)
+    if request.url.path.startswith("/api/") and request.method != "OPTIONS":
+        if store is not None:
+            return await store.handle(request, call_next)
+        if production:
+            return JSONResponse(
+                {"detail": "Simulator storage is unavailable."},
+                status_code=503,
+                headers={"cache-control": "no-store"},
+            )
     return await call_next(request)
 
 

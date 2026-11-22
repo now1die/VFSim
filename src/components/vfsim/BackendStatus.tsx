@@ -27,11 +27,10 @@ export function BackendStatusBadge({ className }: { className?: string }) {
       role="status"
     >
       <Icon className="size-3.5" aria-hidden />
-        {isError ? "Backend offline" : isPending ? "Connecting…" : "Backend live"}
+      {isError ? "Backend offline" : isPending ? "Connecting…" : "Backend live"}
       <span className="hidden font-normal normal-case tracking-normal text-muted-foreground sm:inline">
         {isError ? "Unavailable" : (data?.version ?? "connecting…")}
       </span>
     </div>
   );
 }
-

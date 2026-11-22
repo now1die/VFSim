@@ -5,7 +5,8 @@ import asyncio
 from contextlib import closing
 from contextvars import ContextVar
 from dataclasses import asdict
-from hmac import compare_digest
+from hmac import compare_digest, digest
+from ipaddress import ip_address, ip_network
 import json
 import logging
 from pathlib import Path
@@ -22,9 +23,10 @@ from vfs.filesystem import VirtualFileSystem
 from vfs.models import FileHandle
 from vfs.transaction import Transaction
 
-SESSION_COOKIE = "vfsim_session"
+SESSION_COOKIE = "__Host-vfsim_session"
 MAX_AGE = 7 * 24 * 60 * 60
 MAX_SESSIONS = 256
+MAX_SESSIONS_PER_CLIENT = 12
 MAX_OPERATIONS = 150
 MAX_STATE_BYTES = 2 * 1024 * 1024
 session_vfs: ContextVar[VirtualFileSystem | None] = ContextVar("session_vfs", default=None)
@@ -57,12 +59,11 @@ def decode(payload: str) -> VirtualFileSystem:
 
 
 class SessionStore:
-    def __init__(self, database: Path, proxy_token: str, *, secure_cookie: bool = True):
-        if len(proxy_token) < 32 or not proxy_token.isascii():
-            raise ValueError("VFSIM_PROXY_TOKEN must be an ASCII secret of at least 32 characters")
+    def __init__(self, database: Path, proxy_token: str):
+        if not re.fullmatch(r"[A-Za-z0-9_-]{32,}", proxy_token):
+            raise ValueError("VFSIM_PROXY_TOKEN must contain at least 32 URL-safe characters")
         self.database = database
         self.proxy_token = proxy_token
-        self.secure_cookie = secure_cookie
         # One worker, bounded lock storage, deterministic stripe per session.
         self.locks = [asyncio.Lock() for _ in range(32)]
 
@@ -75,34 +76,55 @@ class SessionStore:
         # Require the configured storage directory to exist. Do not silently
         # create the mount itself on an ephemeral disk.
         with closing(self.connect()) as db, db:
-            db.execute("PRAGMA journal_mode=WAL")
+            if db.execute("PRAGMA journal_mode=WAL").fetchone()[0] != "wal":
+                raise sqlite3.OperationalError("Session storage requires WAL support")
             db.execute("""
                 CREATE TABLE IF NOT EXISTS sessions (
                     id TEXT PRIMARY KEY,
                     expires INTEGER NOT NULL,
-                    state TEXT NOT NULL
+                    state TEXT NOT NULL,
+                    client_key TEXT
                 )
             """)
+            columns = {row[1] for row in db.execute("PRAGMA table_info(sessions)")}
+            if "client_key" not in columns:
+                db.execute("ALTER TABLE sessions ADD COLUMN client_key TEXT")
 
     def ready(self) -> bool:
         with closing(sqlite3.connect(f"{self.database.as_uri()}?mode=rw", uri=True, timeout=2)) as db:
             db.execute("SELECT 1 FROM sessions LIMIT 1").fetchone()
         return True
 
-    def start(self, session_id: str | None) -> str | None:
+    def client_key(self, address: str) -> str:
+        try:
+            ip = ip_address(address)
+            if ip.version == 6:
+                ip = ip_network(f"{ip}/64", strict=False).network_address
+            client = str(ip)
+        except ValueError:
+            client = "unknown"
+        return digest(self.proxy_token.encode(), client.encode(), "sha256").hex()
+
+    def start(self, session_id: str | None, client_key: str) -> tuple[str | None, int | None]:
         now = int(time.time())
         with closing(self.connect()) as db, db:
             db.execute("BEGIN IMMEDIATE")
             db.execute("DELETE FROM sessions WHERE expires <= ?", (now,))
             if session_id and db.execute("SELECT 1 FROM sessions WHERE id = ?", (session_id,)).fetchone():
-                return session_id
+                return session_id, None
+            count, first_expiry = db.execute(
+                "SELECT COUNT(*), MIN(expires) FROM sessions WHERE client_key = ?",
+                (client_key,),
+            ).fetchone()
+            if count >= MAX_SESSIONS_PER_CLIENT:
+                return None, first_expiry - now
             if db.execute("SELECT COUNT(*) FROM sessions").fetchone()[0] >= MAX_SESSIONS:
-                return None
+                return None, None
             session_id = secrets.token_urlsafe(32)
-            db.execute("INSERT INTO sessions VALUES (?, ?, ?)", (
-                session_id, now + MAX_AGE, encode(VirtualFileSystem()),
+            db.execute("INSERT INTO sessions (id, expires, state, client_key) VALUES (?, ?, ?, ?)", (
+                session_id, now + MAX_AGE, encode(VirtualFileSystem()), client_key,
             ))
-            return session_id
+            return session_id, None
 
     def load(self, session_id: str) -> VirtualFileSystem | None:
         with closing(self.connect()) as db:
@@ -130,14 +152,21 @@ class SessionStore:
 
         try:
             if request.url.path == "/api/session" and request.method == "POST":
-                new_id = await run_in_threadpool(self.start, session_id)
+                client_key = self.client_key(request.headers.get("x-vfsim-client-ip", ""))
+                new_id, retry_after = await run_in_threadpool(self.start, session_id, client_key)
+                if retry_after is not None:
+                    return JSONResponse(
+                        {"detail": "Too many active simulator sessions from this network."},
+                        status_code=429,
+                        headers={"cache-control": "no-store", "retry-after": str(retry_after)},
+                    )
                 if new_id is None:
                     return _error(503, "The simulator is at capacity. Try again later.")
                 response = Response(status_code=204, headers={"cache-control": "no-store"})
                 if new_id != session_id:
                     response.set_cookie(
-                        SESSION_COOKIE, new_id, max_age=MAX_AGE, path="/api",
-                        secure=self.secure_cookie, httponly=True, samesite="lax",
+                        SESSION_COOKIE, new_id, max_age=MAX_AGE, path="/",
+                        secure=True, httponly=True, samesite="lax",
                     )
                 return response
             if request.url.path == "/api/health":

@@ -85,9 +85,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "VFSim — Filesystem Research Simulator" },
-      { name: "description", content: "Interactive graph-based filesystem simulation, GNN attention inspection, transaction risk analysis, and crash-recovery research." },
+      {
+        name: "description",
+        content:
+          "Interactive graph-based filesystem simulation, GNN attention inspection, transaction risk analysis, and crash-recovery research.",
+      },
       { property: "og:title", content: "VFSim — Filesystem Research Simulator" },
-      { property: "og:description", content: "Interactive filesystem graphs, transaction risk analysis, model attention, and simulated crash recovery." },
+      {
+        property: "og:description",
+        content:
+          "Interactive filesystem graphs, transaction risk analysis, model attention, and simulated crash recovery.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],

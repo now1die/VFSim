@@ -99,11 +99,20 @@ export async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const needsSession = path !== ENDPOINTS.health && API_BASE_URL === "";
   const requestSession = needsSession ? establishSession() : undefined;
   await requestSession;
-  let response = await fetchApi(path, init);
+  const mutation = Boolean(init?.method && init.method !== "GET");
+  let response: Response;
+  try {
+    response = await fetchApi(path, init);
+  } catch (error) {
+    if (mutation && error instanceof ApiError) {
+      throw new ApiError(`${error.message} Check transaction history before retrying.`);
+    }
+    throw error;
+  }
   if (needsSession && response.status === 401) {
     await response.body?.cancel();
     if (session === requestSession) session = undefined;
-    if (init?.method && init.method !== "GET") {
+    if (mutation) {
       throw new ApiError(
         "The simulator session expired. Retry the operation to start a new session.",
         401,
@@ -112,7 +121,16 @@ export async function request<T>(path: string, init?: RequestInit): Promise<T> {
     await establishSession();
     response = await fetchApi(path, init);
   }
-  if (!response.ok) throw await responseError(response);
+  if (!response.ok) {
+    const error = await responseError(response);
+    if (mutation && [502, 504].includes(response.status)) {
+      throw new ApiError(
+        `${error.message} Check transaction history before retrying.`,
+        response.status,
+      );
+    }
+    throw error;
+  }
   return (await response.json()) as T;
 }
 

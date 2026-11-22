@@ -1,4 +1,8 @@
+import { isIP } from "node:net";
+
 const maxBodyBytes = 16_384;
+const sessionCookie = /^__Host-vfsim_session=[A-Za-z0-9_-]{43}$/;
+const proxyToken = /^[A-Za-z0-9_-]{32,}$/;
 
 function failure(status: number, detail: string) {
   return Response.json({ detail }, { status, headers: { "cache-control": "no-store" } });
@@ -10,17 +14,16 @@ export async function proxyApi(request: Request, url: URL) {
   }
   if (request.method !== "GET") {
     const origin = request.headers.get("origin");
-    if (
-      request.headers.get("sec-fetch-site") === "cross-site" ||
-      (origin && origin !== url.origin)
-    ) {
+    if (request.headers.get("sec-fetch-site") === "cross-site" || origin !== url.origin) {
       return failure(403, "API writes must come from VFSim.");
     }
   }
 
   const configuredUrl = process.env["VFSIM_API_URL"];
   const token = process.env["VFSIM_PROXY_TOKEN"];
-  if (!configuredUrl || !token) return failure(503, "The VFSim backend is not configured.");
+  if (!configuredUrl || !token || !proxyToken.test(token)) {
+    return failure(503, "The VFSim backend is not configured.");
+  }
   let upstream: URL;
   try {
     upstream = new URL(configuredUrl);
@@ -46,14 +49,20 @@ export async function proxyApi(request: Request, url: URL) {
   upstream.search = url.search;
   const headers = new Headers({ accept: "application/json", "x-vfsim-proxy-token": token });
   // Forward only VFSim's cookie. Vercel and site cookies belong to the frontend.
-  const session = request.headers
-    .get("cookie")
-    ?.split(";")
-    .map((cookie) => cookie.trim())
-    .find((cookie) => /^vfsim_session=[A-Za-z0-9_-]{43}$/.test(cookie));
-  if (session) headers.set("cookie", session);
+  const cookies = (request.headers.get("cookie") ?? "").split(";").map((cookie) => cookie.trim());
+  const sessions = cookies.filter((cookie) => cookie.startsWith("__Host-vfsim_session="));
+  const [session] = sessions;
+  if (session && sessions.length === 1 && sessionCookie.test(session))
+    headers.set("cookie", session);
+  // Vercel overwrites X-Forwarded-For at ingress. Never forward a client-provided
+  // origin key or trust forwarding headers on a local preview.
+  if (process.env["VERCEL"] === "1" && url.pathname === "/api/session") {
+    const address = request.headers.get("x-forwarded-for")?.trim();
+    if (address && isIP(address)) headers.set("x-vfsim-client-ip", address);
+  }
 
   const timeout = AbortSignal.timeout(25_000);
+  const signal = AbortSignal.any([request.signal, timeout]);
   try {
     let body: Uint8Array<ArrayBuffer> | undefined;
     if (request.body) {
@@ -61,7 +70,7 @@ export async function proxyApi(request: Request, url: URL) {
       const buffer = new Uint8Array(maxBodyBytes);
       let size = 0;
       const cancel = () => void reader.cancel().catch(() => undefined);
-      timeout.addEventListener("abort", cancel, { once: true });
+      signal.addEventListener("abort", cancel, { once: true });
       try {
         while (true) {
           const { done, value } = await reader.read();
@@ -74,7 +83,7 @@ export async function proxyApi(request: Request, url: URL) {
           size += value.byteLength;
         }
       } finally {
-        timeout.removeEventListener("abort", cancel);
+        signal.removeEventListener("abort", cancel);
         reader.releaseLock();
       }
       if (size > 0) {
@@ -91,7 +100,7 @@ export async function proxyApi(request: Request, url: URL) {
       headers,
       ...(body ? { body } : {}),
       redirect: "error",
-      signal: AbortSignal.any([request.signal, timeout]),
+      signal,
     });
     if (result.status >= 500) {
       await result.body?.cancel();
@@ -104,8 +113,19 @@ export async function proxyApi(request: Request, url: URL) {
     }
     const responseHeaders = new Headers({ "cache-control": "no-store" });
     if (contentType) responseHeaders.set("content-type", contentType);
+    const retryAfter = result.headers.get("retry-after");
+    if (result.status === 429 && retryAfter && /^\d{1,6}$/.test(retryAfter)) {
+      responseHeaders.set("retry-after", retryAfter);
+    }
     const cookie = result.headers.get("set-cookie");
-    if (url.pathname === "/api/session" && cookie?.startsWith("vfsim_session=")) {
+    const cookiePair = cookie?.split(";")[0];
+    if (
+      url.pathname === "/api/session" &&
+      result.status === 204 &&
+      cookie &&
+      cookiePair &&
+      sessionCookie.test(cookiePair)
+    ) {
       responseHeaders.set("set-cookie", cookie);
     }
     return new Response(result.body, { status: result.status, headers: responseHeaders });
